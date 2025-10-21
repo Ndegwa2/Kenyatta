@@ -1,0 +1,129 @@
+import React from 'react';
+
+const SvgDashboard = () => {
+  const downloadSVG = () => {
+    const svgEl = document.getElementById('adminSvg');
+    const serializer = new XMLSerializer();
+    let source = serializer.serializeToString(svgEl);
+    if(!source.match(/^<svg[^>]+xmlns=\"http:\/\/www.w3.org\/2000\/svg\"/)){
+      source = source.replace(/^<svg/, '<svg xmlns=\"http://www.w3.org/2000/svg\"');
+    }
+    const blob = new Blob([source], {type: 'image/svg+xml;charset=utf-8'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a'); 
+    a.href = url; 
+    a.download = 'admin-dashboard.svg'; 
+    document.body.appendChild(a); 
+    a.click(); 
+    document.body.removeChild(a); 
+    URL.revokeObjectURL(url);
+  };
+
+  const openInNewTab = () => {
+    const svgEl = document.getElementById('adminSvg');
+    const serializer = new XMLSerializer();
+    let source = serializer.serializeToString(svgEl);
+    if(!source.match(/^<svg[^>]+xmlns=\"http:\/\/www.w3.org\/2000\/svg\"/)){
+      source = source.replace(/^<svg/, '<svg xmlns=\"http://www.w3.org/2000/svg\"');
+    }
+    const url = 'data:image/svg+xml;utf8,' + encodeURIComponent(source);
+    window.open(url, '_blank');
+  };
+
+  return (
+    <div>
+      <div className="actions" style={{ marginBottom: '12px' }}>
+        <button 
+          onClick={downloadSVG}
+          style={{ 
+            padding: '8px 12px', 
+            borderRadius: '8px', 
+            border: '0', 
+            background: '#16a34a', 
+            color: 'white', 
+            cursor: 'pointer',
+            marginRight: '10px'
+          }}
+        >
+          Download SVG
+        </button>
+        <button 
+          onClick={openInNewTab}
+          style={{ 
+            padding: '8px 12px', 
+            borderRadius: '8px', 
+            border: '0', 
+            background: '#1e3a8a', 
+            color: 'white', 
+            cursor: 'pointer' 
+          }}
+        >
+          Open SVG in new tab
+        </button>
+        <p className="note" style={{ color: '#556', marginTop: '8px' }}>
+          Tip: Use "Download SVG" to import into Canva or design tools.
+        </p>
+      </div>
+      <div style={{ maxWidth: '1100px' }}>
+        <svg id="adminSvg" width="1100" height="700" viewBox="0 0 1100 700" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+          <title id="title">Admin Dashboard</title>
+          <desc id="desc">Admin dashboard with sidebar navigation, ticket assignments, and task tracking.</desc>
+
+          <rect x="0" y="0" width="1100" height="700" fill="#f4f6fb" />
+
+          {/* Sidebar */}
+          <rect x="0" y="0" width="200" height="700" fill="#1e293b" />
+          <text x="32" y="60" font-size="18" fill="#f1f5f9" font-weight="700">SOLU-HMS</text>
+
+          {/* Nav items */}
+          <text x="32" y="120" font-size="14" fill="#f1f5f9">🏠 Dashboard</text>
+          <text x="32" y="160" font-size="14" fill="#f1f5f9">🎟 Tickets</text>
+          <text x="32" y="200" font-size="14" fill="#f1f5f9">👷 Casuals</text>
+          <text x="32" y="240" font-size="14" fill="#f1f5f9">📊 Reports</text>
+          <text x="32" y="280" font-size="14" fill="#f1f5f9">⚙ Settings</text>
+
+          {/* Header */}
+          <rect x="210" y="20" width="870" height="64" rx="10" fill="#ffffff" stroke="#e6eefb" />
+          <text x="234" y="58" font-size="22" fill="#0f172a" font-weight="700">Admin Dashboard</text>
+
+          {/* Summary cards */}
+          <rect x="230" y="110" width="180" height="90" rx="10" fill="#dcfce7" stroke="#bbf7d0"/>
+          <text x="246" y="140" font-size="13" font-weight="600" fill="#166534">Pending Tickets</text>
+          <text x="246" y="170" font-size="22" font-weight="700" fill="#166534">14</text>
+
+          <rect x="430" y="110" width="180" height="90" rx="10" fill="#fef9c3" stroke="#fde68a"/>
+          <text x="446" y="140" font-size="13" font-weight="600" fill="#854d0e">Assigned</text>
+          <text x="446" y="170" font-size="22" font-weight="700" fill="#854d0e">8</text>
+
+          <rect x="630" y="110" width="180" height="90" rx="10" fill="#dbeafe" stroke="#bfdbfe"/>
+          <text x="646" y="140" font-size="13" font-weight="600" fill="#1e3a8a">Resolved</text>
+          <text x="646" y="170" font-size="22" font-weight="700" fill="#1e3a8a">20</text>
+
+          {/* Ticket list header */}
+          <text x="230" y="240" font-size="16" font-weight="700" fill="#0f172a">All Tickets</text>
+
+          {/* Tickets */}
+          <g>
+            <rect x="230" y="260" width="830" height="68" rx="8" fill="#fff" stroke="#e5e7eb"/>
+            <text x="254" y="292" font-size="14" font-weight="600" fill="#0f172a">#T-001 — Radiology — X-ray machine sparks</text>
+            <text x="254" y="312" font-size="12" fill="#6b7280">Status: Pending</text>
+            <rect x="900" y="276" width="140" height="32" rx="6" fill="#16a34a"/>
+            <text x="920" y="298" font-size="13" fill="#fff">Assign Casual</text>
+
+            <rect x="230" y="340" width="830" height="68" rx="8" fill="#fff" stroke="#e5e7eb"/>
+            <text x="254" y="372" font-size="14" font-weight="600" fill="#0f172a">#T-002 — Surgery — Broken ceiling light</text>
+            <text x="254" y="392" font-size="12" fill="#6b7280">Status: Assigned to Casual B</text>
+            <rect x="900" y="356" width="140" height="32" rx="6" fill="#eab308"/>
+            <text x="920" y="378" font-size="13" fill="#fff">Reassign</text>
+
+            <rect x="230" y="420" width="830" height="68" rx="8" fill="#fff" stroke="#e5e7eb"/>
+            <text x="254" y="452" font-size="14" font-weight="600" fill="#0f172a">#T-003 — Lab — Water leakage</text>
+            <text x="254" y="472" font-size="12" fill="#6b7280">Status: Resolved</text>
+          </g>
+        </svg>
+      </div>
+    </div>
+  );
+};
+
+export default SvgDashboard;

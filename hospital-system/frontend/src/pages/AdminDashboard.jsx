@@ -1,103 +1,299 @@
-// __define-ocg__ Admin Dashboard component (simulation)
-// Save as: src/pages/AdminDashboard.jsx
+// src/pages/AdminDashboard.jsx
+import { useState, useEffect } from "react";
+import { api } from '../services/api';
+import TicketCard from '../components/TicketCard';
+import TicketDetails from '../components/TicketDetails';
 
-import React, { useState } from "react";
-
-/*
-  This is a frontend-only simulation for the Admin Dashboard.
-  It doesn't call a backend — it stores tickets in local state.
-*/
 export default function AdminDashboard() {
-  // demo state variable requested earlier
-  const [varOcg, setVarOcg] = useState(null);
+  const [active, setActive] = useState("Dashboard");
+  const [tickets, setTickets] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [selectedTicketId, setSelectedTicketId] = useState(null);
+  const [stats, setStats] = useState({
+    pending: 0,
+    assigned: 0,
+    resolved: 0
+  });
 
-  const casualWorkers = ["Casual A", "Casual B", "Casual C"];
+  useEffect(() => {
+    fetchData();
+  }, []);
 
-  const [tickets, setTickets] = useState([
-    // sample tickets from different sources
-    { id: "T-001", type: "department", dept: "Radiology", category: "Electrical", description: "X-ray machine sparks", status: "pending", createdAt: "2025-10-12" },
-    { id: "T-002", type: "patient", patientId: "P-123", issue: "Room too cold", status: "assigned", assignedTo: "Casual A", createdAt: "2025-10-11" },
-    { id: "T-003", type: "maintenance", category: "Plumbing", description: "Leak in hallway", status: "resolved", createdAt: "2025-10-10" },
-    { id: "T-004", type: "department", dept: "Surgery", category: "Cleaning", description: "Floor needs mopping", status: "pending", createdAt: "2025-10-12" },
-    { id: "T-005", type: "patient", patientId: "P-456", issue: "TV not working", status: "assigned", assignedTo: "Casual B", createdAt: "2025-10-11" },
-  ]);
+  const fetchData = async () => {
+    try {
+      // Fetch tickets
+      const ticketsData = await api.get('/admin/tickets');
+      // Ensure tickets is always an array
+      setTickets(Array.isArray(ticketsData) ? ticketsData : []);
+      
+      // Fetch stats
+      const statsData = await api.get('/admin/stats');
+      setStats({
+        pending: statsData.pending || 0,
+        assigned: statsData.assigned || 0,
+        resolved: statsData.resolved || 0
+      });
+      
+      setLoading(false);
+    } catch (err) {
+      console.error('Error fetching data:', err);
+      setError(err.message || 'Failed to fetch data');
+      setTickets([]); // Ensure tickets is always an array
+      setLoading(false);
+    }
+  };
 
-  const pendingCount = tickets.filter(t => t.status === "pending").length;
-  const assignedCount = tickets.filter(t => t.status === "assigned").length;
-  const resolvedCount = tickets.filter(t => t.status === "resolved").length;
+  const updateTicketStatus = async (ticketId, status) => {
+    try {
+      // Map frontend status to backend status
+      const statusMap = {
+        'assigned': 'in_progress',
+        'resolved': 'closed'
+      };
+      const backendStatus = statusMap[status] || status;
+      
+      await api.put(`/admin/ticket/${ticketId}/status`, { status: backendStatus });
+      // Refresh data
+      fetchData();
+    } catch (err) {
+      setError('Failed to update ticket status');
+    }
+  };
 
-  function assignTicket(id, worker) {
-    setTickets(tickets.map(t => t.id === id ? { ...t, status: "assigned", assignedTo: worker } : t));
-    setVarOcg(`Assigned ${id} to ${worker}`);
+  if (loading) {
+    return (
+      <div style={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: '100vh',
+        fontSize: '18px'
+      }}>
+        Loading dashboard...
+      </div>
+    );
   }
 
-  function markResolved(id) {
-    setTickets(tickets.map(t => t.id === id ? { ...t, status: "resolved" } : t));
+  if (error) {
+    return (
+      <div style={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: '100vh',
+        fontSize: '18px',
+        color: '#e74c3c'
+      }}>
+        {error}
+      </div>
+    );
   }
 
   return (
-    <div className="min-h-screen p-6 bg-gray-50">
-      <div className="max-w-6xl mx-auto">
-        <header className="flex items-center justify-between mb-6">
-          <h1 className="text-2xl font-bold text-gray-800">Admin Dashboard</h1>
-          <div className="text-sm text-gray-600">Simulated — no backend</div>
-        </header>
+    <div style={{ margin: '18px', background: '#f4f6fb', minHeight: '100vh' }}>
+      <h2 style={{ marginLeft: '230px' }}>Admin Dashboard</h2>
+      
+      {/* Sidebar */}
+      <div
+        style={{
+          position: 'fixed',
+          left: 0,
+          top: 0,
+          width: '200px',
+          height: '100vh',
+          background: '#1e293b',
+          padding: '20px 0'
+        }}
+      >
+        <div style={{ padding: '0 32px 20px', fontSize: '18px', fontWeight: 700, color: '#f1f5f9' }}>
+          SOLU-HMS
+        </div>
+        
+        <nav style={{ padding: '0 32px' }}>
+          <div
+            style={{
+              fontSize: '14px',
+              color: '#f1f5f9',
+              padding: '10px 0',
+              cursor: 'pointer',
+              backgroundColor: active === 'Dashboard' ? 'rgba(255,255,255,0.1)' : 'transparent',
+              borderRadius: '4px'
+            }}
+            onClick={() => setActive('Dashboard')}
+          >
+            🏠 Dashboard
+          </div>
+          <div
+            style={{
+              fontSize: '14px',
+              color: '#f1f5f9',
+              padding: '10px 0',
+              cursor: 'pointer',
+              backgroundColor: active === 'Tickets' ? 'rgba(255,255,255,0.1)' : 'transparent',
+              borderRadius: '4px'
+            }}
+            onClick={() => setActive('Tickets')}
+          >
+            🎟 Tickets
+          </div>
+          <div
+            style={{
+              fontSize: '14px',
+              color: '#f1f5f9',
+              padding: '10px 0',
+              cursor: 'pointer',
+              backgroundColor: active === 'Casuals' ? 'rgba(255,255,255,0.1)' : 'transparent',
+              borderRadius: '4px'
+            }}
+            onClick={() => setActive('Casuals')}
+          >
+            👷 Casuals
+          </div>
+          <div
+            style={{
+              fontSize: '14px',
+              color: '#f1f5f9',
+              padding: '10px 0',
+              cursor: 'pointer',
+              backgroundColor: active === 'Reports' ? 'rgba(255,255,255,0.1)' : 'transparent',
+              borderRadius: '4px'
+            }}
+            onClick={() => setActive('Reports')}
+          >
+            📊 Reports
+          </div>
+          <div
+            style={{
+              fontSize: '14px',
+              color: '#f1f5f9',
+              padding: '10px 0',
+              cursor: 'pointer',
+              backgroundColor: active === 'Settings' ? 'rgba(255,255,255,0.1)' : 'transparent',
+              borderRadius: '4px'
+            }}
+            onClick={() => setActive('Settings')}
+          >
+            ⚙ Settings
+          </div>
+        </nav>
+      </div>
+
+      {/* Main Content */}
+      <div style={{ marginLeft: '230px', maxWidth: '870px' }}>
+        {/* Header */}
+        <div
+          style={{
+            width: '100%',
+            height: '64px',
+            borderRadius: '10px',
+            background: '#ffffff',
+            border: '1px solid #e6eefb',
+            display: 'flex',
+            alignItems: 'center',
+            padding: '0 24px',
+            marginBottom: '30px'
+          }}
+        >
+          <h1 style={{ fontSize: '22px', color: '#0f172a', fontWeight: 700, margin: 0 }}>
+            Admin Dashboard
+          </h1>
+        </div>
 
         {/* Summary cards */}
-        <div className="grid grid-cols-3 gap-6 mb-8">
-          <div className="bg-green-100 border border-green-200 p-6 rounded-xl">
-            <h3 className="text-lg font-semibold text-green-800">Pending Tickets</h3>
-            <p className="text-3xl font-bold text-green-800">{pendingCount}</p>
+        <div style={{ display: 'flex', gap: '20px', marginBottom: '30px' }}>
+          <div
+            style={{
+              width: '180px',
+              height: '90px',
+              borderRadius: '10px',
+              background: '#dcfce7',
+              border: '1px solid #bbf7d0',
+              padding: '16px'
+            }}
+          >
+            <div style={{ fontSize: '13px', fontWeight: 600, color: '#166534', marginBottom: '8px' }}>
+              Pending Tickets
+            </div>
+            <div style={{ fontSize: '22px', fontWeight: 700, color: '#166534' }}>
+              {stats.pending}
+            </div>
           </div>
-          <div className="bg-yellow-100 border border-yellow-200 p-6 rounded-xl">
-            <h3 className="text-lg font-semibold text-yellow-800">Assigned</h3>
-            <p className="text-3xl font-bold text-yellow-800">{assignedCount}</p>
+
+          <div
+            style={{
+              width: '180px',
+              height: '90px',
+              borderRadius: '10px',
+              background: '#fef9c3',
+              border: '1px solid #fde68a',
+              padding: '16px'
+            }}
+          >
+            <div style={{ fontSize: '13px', fontWeight: 600, color: '#854d0e', marginBottom: '8px' }}>
+              Assigned
+            </div>
+            <div style={{ fontSize: '22px', fontWeight: 700, color: '#854d0e' }}>
+              {stats.assigned}
+            </div>
           </div>
-          <div className="bg-blue-100 border border-blue-200 p-6 rounded-xl">
-            <h3 className="text-lg font-semibold text-blue-800">Resolved</h3>
-            <p className="text-3xl font-bold text-blue-800">{resolvedCount}</p>
+
+          <div
+            style={{
+              width: '180px',
+              height: '90px',
+              borderRadius: '10px',
+              background: '#dbeafe',
+              border: '1px solid #bfdbfe',
+              padding: '16px'
+            }}
+          >
+            <div style={{ fontSize: '13px', fontWeight: 600, color: '#1e3a8a', marginBottom: '8px' }}>
+              Resolved
+            </div>
+            <div style={{ fontSize: '22px', fontWeight: 700, color: '#1e3a8a' }}>
+              {stats.resolved}
+            </div>
           </div>
         </div>
 
-        {/* Ticket list */}
-        <div className="bg-white p-6 rounded-xl shadow">
-          <h2 className="text-lg font-semibold mb-4 text-gray-800">All Tickets</h2>
-
-          <div className="space-y-4">
-            {tickets.map(ticket => (
-              <div key={ticket.id} className={`border rounded-lg p-4 ${ticket.status === "pending" ? "bg-white" : ticket.status === "assigned" ? "bg-yellow-50" : "bg-green-50"}`}>
-                <div className="flex justify-between items-start">
-                  <div>
-                    <div className="text-sm font-medium text-gray-800">
-                      {ticket.id} — 
-                      {ticket.type === "department" ? `${ticket.dept} — ${ticket.category}` : 
-                       ticket.type === "patient" ? `Patient ${ticket.patientId} — ${ticket.issue}` : 
-                       `${ticket.category} — ${ticket.description}`}
-                    </div>
-                    <div className="text-xs text-gray-600 mt-1">Status: {ticket.status}{ticket.assignedTo ? ` • Assigned to ${ticket.assignedTo}` : ''}</div>
-                    <div className="text-xs text-gray-500 mt-1">Created: {ticket.createdAt}</div>
-                  </div>
-                  <div className="flex gap-2">
-                    {ticket.status === "pending" && (
-                      <select onChange={(e) => assignTicket(ticket.id, e.target.value)} className="px-3 py-1 border rounded text-sm">
-                        <option value="">Assign to...</option>
-                        {casualWorkers.map(w => <option key={w} value={w}>{w}</option>)}
-                      </select>
-                    )}
-                    {ticket.status !== "resolved" && (
-                      <button onClick={() => markResolved(ticket.id)} className="px-3 py-1 bg-green-600 text-white rounded text-sm">Mark Resolved</button>
-                    )}
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
+        {/* Ticket list header */}
+        <div style={{ fontSize: '16px', fontWeight: 700, color: '#0f172a', marginBottom: '10px' }}>
+          All Tickets
         </div>
 
-        {varOcg && (
-          <div className="mt-6 p-3 bg-blue-50 rounded text-sm text-blue-800">
-            Simulation note: {varOcg}
-          </div>
+        {/* Tickets */}
+        <div>
+          {tickets.length === 0 ? (
+            <div style={{
+              textAlign: 'center',
+              padding: '40px',
+              color: '#6b7280',
+              background: '#fff',
+              borderRadius: '8px'
+            }}>
+              No tickets found
+            </div>
+          ) : (
+            tickets.map((ticket) => (
+              <TicketCard
+                key={ticket.id}
+                ticket={ticket}
+                onClick={(ticketId) => setSelectedTicketId(ticketId)}
+              />
+            ))
+          )}
+        </div>
+
+        {/* Ticket Details Modal */}
+        {selectedTicketId && (
+          <TicketDetails
+            ticketId={selectedTicketId}
+            onClose={() => {
+              setSelectedTicketId(null);
+              fetchData(); // Refresh data when modal closes
+            }}
+          />
         )}
       </div>
     </div>
