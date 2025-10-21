@@ -1,0 +1,61 @@
+/* Patient Dashboard Tab Styles */
+.tab-navigation {
+  display: flex;
+  background: white;
+  border-radius: 8px;
+  padding: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+}
+
+.tab-button {
+  flex: 1;
+  padding: 12px 20px;
+  border: none;
+  background: transparent;
+  color: #6c757d;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: all 0.2s;
+  position: relative;
+}
+
+.tab-button:hover {
+  background-color: #f8f9fa;
+  color: #495057;
+}
+
+.tab-button.active {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+}
+
+.tab-button.active:hover {
+  background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
+}
+
+/* Responsive tabs */
+@media (max-width: 768px) {
+  .tab-navigation {
+    flex-direction: column;
+  }
+
+  .tab-button {
+    text-align: center;
+  }
+}
+
+/* Tab content spacing */
+.tab-content {
+  margin-top: 20px;
+}
+
+/* Override default margins for components in tabs */
+.tab-content .patient-profile,
+.tab-content .appointment-scheduler,
+.tab-content .appointment-list {
+  margin-bottom: 20px;
+}

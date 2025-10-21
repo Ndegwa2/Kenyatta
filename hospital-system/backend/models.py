@@ -9,10 +9,11 @@ Ticket = None
 CasualWorker = None
 TicketComment = None
 TicketAttachment = None
+Appointment = None
 
 def init_models(db):
     """Initialize models after app creation"""
-    global User, Patient, Department, Ticket, CasualWorker, TicketComment, TicketAttachment
+    global User, Patient, Department, Ticket, CasualWorker, TicketComment, TicketAttachment, Appointment
 
     class User(db.Model, UserMixin):
         id = db.Column(db.Integer, primary_key=True)
@@ -106,3 +107,37 @@ def init_models(db):
         file_size = db.Column(db.Integer, nullable=False)  # in bytes
         uploaded_by = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
         uploaded_at = db.Column(db.DateTime, default=db.func.current_timestamp())
+
+    class Appointment(db.Model):
+        id = db.Column(db.Integer, primary_key=True)
+        patient_id = db.Column(db.Integer, db.ForeignKey('patient.id'), nullable=False)
+        department_id = db.Column(db.Integer, db.ForeignKey('department.id'), nullable=False)
+        doctor_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)  # Assigned doctor
+        scheduled_by = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)  # Who scheduled it
+
+        # Appointment Details
+        appointment_date = db.Column(db.Date, nullable=False)
+        appointment_time = db.Column(db.Time, nullable=False)
+        duration_minutes = db.Column(db.Integer, default=30)  # Default 30 minutes
+
+        # Appointment Information
+        appointment_type = db.Column(db.String(100), nullable=False)  # consultation, follow-up, procedure, etc.
+        reason = db.Column(db.Text, nullable=False)
+        notes = db.Column(db.Text, nullable=True)
+
+        # Status and Tracking
+        status = db.Column(db.String(50), default='scheduled')  # scheduled, confirmed, in_progress, completed, cancelled, no_show
+        priority = db.Column(db.String(20), default='normal')  # low, normal, high, urgent
+
+        # Timestamps
+        created_at = db.Column(db.DateTime, default=db.func.current_timestamp())
+        updated_at = db.Column(db.DateTime, default=db.func.current_timestamp(), onupdate=db.func.current_timestamp())
+        confirmed_at = db.Column(db.DateTime, nullable=True)
+        completed_at = db.Column(db.DateTime, nullable=True)
+        cancelled_at = db.Column(db.DateTime, nullable=True)
+
+        # Relationships
+        patient = db.relationship('Patient', backref=db.backref('appointments', lazy=True))
+        department = db.relationship('Department', backref=db.backref('appointments', lazy=True))
+        doctor = db.relationship('User', foreign_keys=[doctor_id], backref=db.backref('doctor_appointments', lazy=True))
+        scheduler = db.relationship('User', foreign_keys=[scheduled_by], backref=db.backref('scheduled_appointments', lazy=True))
