@@ -41,44 +41,7 @@ def load_user(user_id):
 # Create database tables
 with app.app_context():
     db.create_all()
-
-    # Create sample users for testing
-    from models import User
-
-    # Check if users already exist
-    if not User.query.filter_by(username='admin@hospital.com').first():
-        admin = User(username='admin@hospital.com', role='admin')
-        admin.set_password('admin123')
-        db.session.add(admin)
-
-        patient = User(username='patient@hospital.com', role='patient')
-        patient.set_password('patient123')
-        db.session.add(patient)
-
-        department = User(username='dept@hospital.com', role='department')
-        department.set_password('dept123')
-        db.session.add(department)
-
-        casual = User(username='casual@hospital.com', role='casual')
-        casual.set_password('casual123')
-        db.session.add(casual)
-
-        db.session.commit()
-        print("Sample users created!")
-    
-    # Create sample patient record if it doesn't exist
-    from models import Patient
-    patient_user = User.query.filter_by(username='patient@hospital.com').first()
-    if patient_user and not Patient.query.filter_by(user_id=patient_user.id).first():
-        patient_record = Patient(
-            name='John Doe',
-            age=30,
-            condition='Regular checkup',
-            user_id=patient_user.id
-        )
-        db.session.add(patient_record)
-        db.session.commit()
-        print("Sample patient record created!")
+    print("Database tables created. Run 'python backend/init_db.py' to populate with sample data.")
 
 # Import routes after app creation to avoid circular imports
 from routes import register_blueprints

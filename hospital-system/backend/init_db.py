@@ -49,10 +49,29 @@ def init_database():
         
         print("Creating patients...")
         
-        # Create patient profile
+        # Create patient profile with enhanced fields
+        from datetime import date
         patient = Patient(
             name='John Doe',
             age=35,
+            gender='Male',
+            date_of_birth=date(1988, 5, 15),
+            phone='+254712345678',
+            email='john.doe@email.com',
+            address='123 Main Street, Apartment 4B',
+            city='Nairobi',
+            state='Nairobi County',
+            zip_code='00100',
+            emergency_contact_name='Jane Doe',
+            emergency_contact_phone='+254723456789',
+            emergency_contact_relationship='Spouse',
+            blood_type='O+',
+            allergies='Penicillin, Peanuts',
+            chronic_conditions='Hypertension',
+            current_medications='Lisinopril 10mg daily',
+            insurance_provider='AAR Insurance',
+            insurance_policy_number='AAR-2024-12345',
+            insurance_group_number='GRP-001',
             condition='Regular checkup',
             user_id=patient_user.id
         )

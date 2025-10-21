@@ -30,8 +30,40 @@ def init_models(db):
         id = db.Column(db.Integer, primary_key=True)
         name = db.Column(db.String(150), nullable=False)
         age = db.Column(db.Integer, nullable=False)
-        condition = db.Column(db.String(250), nullable=False)
+        gender = db.Column(db.String(20), nullable=True)
+        date_of_birth = db.Column(db.Date, nullable=True)
+        
+        # Contact Information
+        phone = db.Column(db.String(20), nullable=True)
+        email = db.Column(db.String(150), nullable=True)
+        address = db.Column(db.Text, nullable=True)
+        city = db.Column(db.String(100), nullable=True)
+        state = db.Column(db.String(100), nullable=True)
+        zip_code = db.Column(db.String(20), nullable=True)
+        
+        # Emergency Contact
+        emergency_contact_name = db.Column(db.String(150), nullable=True)
+        emergency_contact_phone = db.Column(db.String(20), nullable=True)
+        emergency_contact_relationship = db.Column(db.String(50), nullable=True)
+        
+        # Medical Information
+        blood_type = db.Column(db.String(5), nullable=True)  # A+, A-, B+, B-, AB+, AB-, O+, O-
+        allergies = db.Column(db.Text, nullable=True)  # JSON string or comma-separated
+        chronic_conditions = db.Column(db.Text, nullable=True)
+        current_medications = db.Column(db.Text, nullable=True)
+        
+        # Insurance Information
+        insurance_provider = db.Column(db.String(150), nullable=True)
+        insurance_policy_number = db.Column(db.String(100), nullable=True)
+        insurance_group_number = db.Column(db.String(100), nullable=True)
+        
+        # Administrative
+        condition = db.Column(db.String(250), nullable=True)  # Current condition/reason for visit
+        admission_date = db.Column(db.DateTime, nullable=True)
+        discharge_date = db.Column(db.DateTime, nullable=True)
         user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+        created_at = db.Column(db.DateTime, default=db.func.current_timestamp())
+        updated_at = db.Column(db.DateTime, default=db.func.current_timestamp(), onupdate=db.func.current_timestamp())
 
     class Department(db.Model):
         id = db.Column(db.Integer, primary_key=True)
