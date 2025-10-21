@@ -1,7 +1,9 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, current_app
 from flask_login import login_required, current_user
-from app import db
 from models import CasualWorker
+
+def get_db():
+    return current_app.db
 
 maintenance_bp = Blueprint('maintenance', __name__)
 
@@ -24,6 +26,7 @@ def add_worker():
         task=data['task'],
         user_id=current_user.id
     )
+    db = get_db()
     db.session.add(worker)
     db.session.commit()
     return jsonify({'message': 'Worker added successfully'}), 201

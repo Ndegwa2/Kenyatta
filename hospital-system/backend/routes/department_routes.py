@@ -1,7 +1,9 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, current_app
 from flask_login import login_required, current_user
-from app import db
 from models import Department, Ticket
+
+def get_db():
+    return current_app.db
 
 department_bp = Blueprint('department', __name__)
 
@@ -25,6 +27,7 @@ def update_ticket_status(ticket_id):
     ticket = Ticket.query.get(ticket_id)
     if ticket:
         ticket.status = data['status']
+        db = get_db()
         db.session.commit()
         return jsonify({'message': 'Ticket status updated'}), 200
     return jsonify({'message': 'Ticket not found'}), 404

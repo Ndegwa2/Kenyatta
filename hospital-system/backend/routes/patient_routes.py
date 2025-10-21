@@ -1,7 +1,9 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, current_app
 from flask_login import login_required, current_user
-from app import db
 from models import Patient, Ticket
+
+def get_db():
+    return current_app.db
 
 patient_bp = Blueprint('patient', __name__)
 
@@ -36,12 +38,22 @@ def get_tickets():
 def create_ticket():
     data = request.get_json()
     patient = Patient.query.filter_by(user_id=current_user.id).first()
+    
+    if not patient:
+        return jsonify({'message': 'Patient profile not found'}), 404
+    
     ticket = Ticket(
         title=data['title'],
         description=data['description'],
         patient_id=patient.id,
-        department_id=data['department_id']
+        department_id=data['department_id'],
+        priority=data.get('priority', 'medium'),
+        category=data.get('category', 'general')
     )
+    db = get_db()
     db.session.add(ticket)
     db.session.commit()
-    return jsonify({'message': 'Ticket created successfully'}), 201
+    return jsonify({
+        'message': 'Ticket created successfully',
+        'ticket_id': ticket.id
+    }), 201
