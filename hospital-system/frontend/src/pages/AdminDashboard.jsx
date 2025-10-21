@@ -1,10 +1,13 @@
 // src/pages/AdminDashboard.jsx
 import { useState, useEffect } from "react";
+import { useNavigate } from 'react-router-dom';
 import { api } from '../services/api';
+import { auth } from '../services/auth';
 import TicketCard from '../components/TicketCard';
 import TicketDetails from '../components/TicketDetails';
 
 export default function AdminDashboard() {
+  const navigate = useNavigate();
   const [active, setActive] = useState("Dashboard");
   const [tickets, setTickets] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -15,6 +18,16 @@ export default function AdminDashboard() {
     assigned: 0,
     resolved: 0
   });
+
+  const handleLogout = async () => {
+    try {
+      await auth.logout();
+      navigate('/');
+    } catch (error) {
+      console.error('Logout error:', error);
+      navigate('/'); // Navigate anyway
+    }
+  };
 
   useEffect(() => {
     fetchData();
@@ -175,6 +188,22 @@ export default function AdminDashboard() {
             onClick={() => setActive('Settings')}
           >
             ⚙ Settings
+          </div>
+          <div
+            style={{
+              fontSize: '14px',
+              color: '#f1f5f9',
+              padding: '10px 0',
+              cursor: 'pointer',
+              backgroundColor: 'transparent',
+              borderRadius: '4px',
+              marginTop: '20px',
+              borderTop: '1px solid rgba(255,255,255,0.1)',
+              paddingTop: '20px'
+            }}
+            onClick={handleLogout}
+          >
+            🚪 Logout
           </div>
         </nav>
       </div>
