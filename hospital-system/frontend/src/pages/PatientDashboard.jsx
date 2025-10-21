@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Navbar from '../components/Navbar';
 import Sidebar from '../components/Sidebar';
+import PatientProfile from '../components/PatientProfile';
 import { api } from '../services/api';
 
 const PatientDashboard = () => {
@@ -98,12 +99,11 @@ const PatientDashboard = () => {
           </div>
           
           {profile && (
-            <div className="ticket-card" style={{ marginBottom: '2rem' }}>
-              <h3>Patient Profile</h3>
-              <p><strong>Name:</strong> {profile.name}</p>
-              <p><strong>Age:</strong> {profile.age}</p>
-              <p><strong>Condition:</strong> {profile.condition}</p>
-            </div>
+            <PatientProfile
+              profile={profile}
+              onProfileUpdate={fetchData}
+              style={{ marginBottom: '2rem' }}
+            />
           )}
           
           {showCreateForm && (
