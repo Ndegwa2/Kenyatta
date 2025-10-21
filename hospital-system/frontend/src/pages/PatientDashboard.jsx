@@ -4,6 +4,7 @@ import Sidebar from '../components/Sidebar';
 import PatientProfile from '../components/PatientProfile';
 import AppointmentScheduler from '../components/AppointmentScheduler';
 import AppointmentList from '../components/AppointmentList';
+import Card from '../components/Card';
 import { api } from '../services/api';
 import './PatientDashboard.css';
 
@@ -92,7 +93,7 @@ const PatientDashboard = () => {
       <div className="content">
         <Sidebar role="patient" />
         <main>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
+          <div className="main-header">
             <h2>Patient Dashboard</h2>
             <button
               className="btn btn-primary"
@@ -152,8 +153,10 @@ const PatientDashboard = () => {
           {activeTab === 'tickets' && (
             <div>
               {showCreateForm && (
-                <div className="ticket-card" style={{ marginBottom: '2rem' }}>
-                  <h3>Create New Ticket</h3>
+                <Card className="mb-6">
+                  <div className="card__header">
+                    <h3 className="card__title">Create New Ticket</h3>
+                  </div>
                   <form onSubmit={handleCreateTicket}>
                     <div className="form-group">
                       <label>Title</label>
@@ -187,24 +190,26 @@ const PatientDashboard = () => {
                     </div>
                     <button type="submit" className="btn btn-primary">Submit Ticket</button>
                   </form>
-                </div>
+                </Card>
               )}
 
-              <h3>My Tickets</h3>
+              <h3 className="mb-4">My Tickets</h3>
               {tickets.length === 0 ? (
-                <div className="ticket-card">
-                  <p>No tickets found.</p>
-                </div>
+                <Card>
+                  <p className="text-center text-secondary">No tickets found.</p>
+                </Card>
               ) : (
                 tickets.map(ticket => (
-                  <div key={ticket.id} className="ticket-card" style={{ marginBottom: '1rem' }}>
-                    <h4>{ticket.title}</h4>
-                    <p>{ticket.description}</p>
-                    <div className="d-flex justify-between align-center">
-                      <span className={`status-${ticket.status}`}>{ticket.status}</span>
-                      <small>Ticket ID: {ticket.id}</small>
+                  <Card key={ticket.id} className="mb-4">
+                    <div className="card__header">
+                      <h4 className="card__title">{ticket.title}</h4>
                     </div>
-                  </div>
+                    <p className="mb-4">{ticket.description}</p>
+                    <div className="flex justify-between items-center">
+                      <span className={`status-badge status-${ticket.status}`}>{ticket.status}</span>
+                      <small className="text-muted">Ticket ID: {ticket.id}</small>
+                    </div>
+                  </Card>
                 ))
               )}
             </div>

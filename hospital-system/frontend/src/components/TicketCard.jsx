@@ -1,23 +1,24 @@
 import React from 'react';
+import Card from './Card';
 import './TicketCard.css';
 
 const TicketCard = ({ ticket, onClick }) => {
-  const getPriorityColor = (priority) => {
+  const getPriorityVariant = (priority) => {
     switch (priority) {
-      case 'critical': return '#dc3545';
-      case 'high': return '#fd7e14';
-      case 'medium': return '#ffc107';
-      case 'low': return '#28a745';
-      default: return '#6c757d';
+      case 'critical': return 'error';
+      case 'high': return 'warning';
+      case 'medium': return 'info';
+      case 'low': return 'success';
+      default: return 'default';
     }
   };
 
   const getStatusColor = (status) => {
     switch (status) {
-      case 'open': return '#28a745';
-      case 'in_progress': return '#ffc107';
-      case 'closed': return '#6c757d';
-      default: return '#6c757d';
+      case 'open': return 'var(--hospital-success)';
+      case 'in_progress': return 'var(--hospital-warning)';
+      case 'closed': return 'var(--hospital-text-secondary)';
+      default: return 'var(--hospital-text-secondary)';
     }
   };
 
@@ -28,44 +29,49 @@ const TicketCard = ({ ticket, onClick }) => {
   };
 
   return (
-    <div className="ticket-card" onClick={() => onClick && onClick(ticket.id)}>
-      <div className="ticket-card-header">
-        <h3>{ticket.title}</h3>
-        <div className="ticket-badges">
-          <span 
-            className="priority-badge" 
-            style={{ backgroundColor: getPriorityColor(ticket.priority) }}
-          >
-            {ticket.priority || 'medium'}
-          </span>
-          <span 
-            className="status-badge" 
+    <Card
+      variant={getPriorityVariant(ticket.priority)}
+      interactive={!!onClick}
+      onClick={() => onClick && onClick(ticket.id)}
+      className="ticket-card--enhanced"
+    >
+      <div className="ticket-card__header">
+        <h3 className="ticket-card__title">{ticket.title}</h3>
+        <div className="ticket-card__badges">
+          <span
+            className="status-badge"
             style={{ backgroundColor: getStatusColor(ticket.status) }}
           >
-            {ticket.status}
+            {ticket.status?.replace('_', ' ')}
           </span>
         </div>
       </div>
-      <p className="ticket-description">{ticket.description}</p>
-      <div className="ticket-card-footer">
-        <div className="ticket-meta">
+
+      <div className="ticket-card__content">
+        <p className="ticket-card__description">{ticket.description}</p>
+      </div>
+
+      <div className="ticket-card__footer">
+        <div className="ticket-card__meta">
           {ticket.category && (
-            <span className="category-tag">{ticket.category}</span>
+            <span className="meta-tag meta-tag--category">{ticket.category}</span>
           )}
           {ticket.department && (
-            <span className="department-tag">📍 {ticket.department}</span>
+            <span className="meta-tag meta-tag--department">🏥 {ticket.department}</span>
           )}
         </div>
-        {ticket.created_at && (
-          <span className="ticket-date">Created: {formatDate(ticket.created_at)}</span>
-        )}
-      </div>
-      {ticket.assigned_to && (
-        <div className="assigned-info">
-          👤 Assigned to: {ticket.assigned_to}
+        <div className="ticket-card__info">
+          {ticket.created_at && (
+            <span className="ticket-date">{formatDate(ticket.created_at)}</span>
+          )}
+          {ticket.assigned_to && (
+            <div className="assigned-info">
+              👤 {ticket.assigned_to}
+            </div>
+          )}
         </div>
-      )}
-    </div>
+      </div>
+    </Card>
   );
 };
 

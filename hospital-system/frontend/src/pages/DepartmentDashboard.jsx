@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Sidebar from '../components/Sidebar';
 import Navbar from '../components/Navbar';
+import Card from '../components/Card';
 import { api } from '../services/api';
 
 export default function DepartmentDashboard() {
@@ -72,45 +73,48 @@ export default function DepartmentDashboard() {
       <div className="content">
         <Sidebar role="department" />
         <main>
-          <h2>Department Dashboard</h2>
+          <div className="main-header">
+            <h2>Department Dashboard</h2>
+          </div>
           
-          <h3>Department Tickets</h3>
+          <h3 className="mb-4">Department Tickets</h3>
           {tickets.length === 0 ? (
-            <div className="ticket-card">
-              <p>No tickets found.</p>
-            </div>
+            <Card>
+              <p className="text-center text-secondary">No tickets found.</p>
+            </Card>
           ) : (
             tickets.map(ticket => (
-              <div key={ticket.id} className="ticket-card" style={{ marginBottom: '1rem' }}>
-                <h4>{ticket.title}</h4>
-                <p>{ticket.description}</p>
-                <div className="d-flex justify-between align-center">
-                  <span className={`status-${ticket.status}`}>{ticket.status}</span>
-                  <small>Patient ID: {ticket.patient_id}</small>
+              <Card key={ticket.id} className="mb-4">
+                <div className="card__header">
+                  <h4 className="card__title">{ticket.title}</h4>
                 </div>
-                <div style={{ marginTop: '1rem' }}>
+                <p className="mb-4">{ticket.description}</p>
+                <div className="flex justify-between items-center mb-4">
+                  <span className={`status-badge status-${ticket.status}`}>{ticket.status}</span>
+                  <small className="text-muted">Patient ID: {ticket.patient_id}</small>
+                </div>
+                <div className="flex gap-2">
                   {ticket.status === 'open' && (
                     <button
                       className="btn btn-primary"
                       onClick={() => updateTicketStatus(ticket.id, 'in_progress')}
-                      style={{ marginRight: '0.5rem' }}
                     >
                       Mark In Progress
                     </button>
                   )}
                   {ticket.status === 'in_progress' && (
                     <button
-                      className="btn btn-secondary"
+                      className="btn btn-success"
                       onClick={() => updateTicketStatus(ticket.id, 'closed')}
                     >
                       Mark Resolved
                     </button>
                   )}
                   {ticket.status === 'closed' && (
-                    <span className="status-closed">Resolved</span>
+                    <span className="status-badge status-closed">Resolved</span>
                   )}
                 </div>
-              </div>
+              </Card>
             ))
           )}
         </main>

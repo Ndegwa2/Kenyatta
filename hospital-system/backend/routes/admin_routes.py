@@ -66,6 +66,16 @@ def update_ticket_status(ticket_id):
         return jsonify({'message': 'Ticket status updated'}), 200
     return jsonify({'message': 'Ticket not found'}), 404
 
+@admin_bp.route('/departments', methods=['GET'])
+@login_required
+def get_departments():
+    departments = Department.query.all()
+    return jsonify([{
+        'id': d.id,
+        'name': d.name,
+        'user_id': d.user_id
+    } for d in departments]), 200
+
 @admin_bp.route('/stats', methods=['GET'])
 @login_required
 def get_stats():
@@ -73,12 +83,12 @@ def get_stats():
     departments = Department.query.count()
     tickets = Ticket.query.count()
     workers = CasualWorker.query.count()
-    
+
     # Get ticket status counts
     pending_tickets = Ticket.query.filter_by(status='open').count()
     assigned_tickets = Ticket.query.filter_by(status='in_progress').count()
     resolved_tickets = Ticket.query.filter_by(status='closed').count()
-    
+
     return jsonify({
         'patients': patients,
         'departments': departments,

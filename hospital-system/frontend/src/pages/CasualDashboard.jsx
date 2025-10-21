@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Navbar from '../components/Navbar';
 import Sidebar from '../components/Sidebar';
+import Card from '../components/Card';
 import { api } from '../services/api';
 
 const CasualDashboard = () => {
@@ -80,7 +81,7 @@ const CasualDashboard = () => {
       <div className="content">
         <Sidebar role="casual" />
         <main>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
+          <div className="main-header">
             <h2>Casual Workers Dashboard</h2>
             <button
               className="btn btn-primary"
@@ -91,8 +92,10 @@ const CasualDashboard = () => {
           </div>
           
           {showCreateForm && (
-            <div className="ticket-card" style={{ marginBottom: '2rem' }}>
-              <h3>Add New Worker</h3>
+            <Card className="mb-6">
+              <div className="card__header">
+                <h3 className="card__title">Add New Worker</h3>
+              </div>
               <form onSubmit={handleCreateWorker}>
                 <div className="form-group">
                   <label>Worker Name</label>
@@ -116,20 +119,22 @@ const CasualDashboard = () => {
                 </div>
                 <button type="submit" className="btn btn-primary">Add Worker</button>
               </form>
-            </div>
+            </Card>
           )}
-          
-          <h3>Casual Workers</h3>
+
+          <h3 className="mb-4">Casual Workers</h3>
           {workers.length === 0 ? (
-            <div className="ticket-card">
-              <p>No workers found.</p>
-            </div>
+            <Card>
+              <p className="text-center text-secondary">No workers found.</p>
+            </Card>
           ) : (
             workers.map(worker => (
-              <div key={worker.id} className="ticket-card" style={{ marginBottom: '1rem' }}>
-                <h4>{worker.name}</h4>
-                <p><strong>Task:</strong> {worker.task}</p>
-              </div>
+              <Card key={worker.id} className="mb-4">
+                <div className="card__header">
+                  <h4 className="card__title">{worker.name}</h4>
+                </div>
+                <p className="mb-2"><strong>Task:</strong> {worker.task}</p>
+              </Card>
             ))
           )}
         </main>

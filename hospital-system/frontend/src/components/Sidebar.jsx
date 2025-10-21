@@ -1,43 +1,75 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { auth } from '../services/auth';
 
 const Sidebar = ({ role }) => {
+  const [activeItem, setActiveItem] = useState('Dashboard');
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    try {
+      await auth.logout();
+      navigate('/');
+    } catch (error) {
+      console.error('Logout error:', error);
+      navigate('/');
+    }
+  };
+
+  const menuItems = {
+    patient: [
+      { icon: '👤', label: 'Profile', id: 'profile' },
+      { icon: '🎫', label: 'My Tickets', id: 'tickets' },
+      { icon: '➕', label: 'Create Ticket', id: 'create' }
+    ],
+    department: [
+      { icon: '🏠', label: 'Dashboard', id: 'dashboard' },
+      { icon: '🎫', label: 'Tickets', id: 'tickets' },
+      { icon: '📝', label: 'Raise Issue', id: 'raise-issue' }
+    ],
+    admin: [
+      { icon: '🏠', label: 'Dashboard', id: 'dashboard' },
+      { icon: '🎫', label: 'Tickets', id: 'tickets' },
+      { icon: '👷', label: 'Casuals', id: 'casuals' },
+      { icon: '📊', label: 'Reports', id: 'reports' },
+      { icon: '⚙', label: 'Settings', id: 'settings' }
+    ],
+    casual: [
+      { icon: '🏠', label: 'Dashboard', id: 'dashboard' },
+      { icon: '🎫', label: 'My Tasks', id: 'tasks' },
+      { icon: '📝', label: 'Update Status', id: 'update-status' }
+    ]
+  };
+
+  const currentMenu = menuItems[role] || [];
+
   return (
-    <aside className="w-48 bg-slate-800 text-slate-100 min-h-screen p-4">
-      <div className="mb-8">
-        <h1 className="text-xl font-bold">SOLU-HMS</h1>
+    <aside className="sidebar">
+      <div className="sidebar-header">
+        <h1>SOLU-HMS</h1>
       </div>
-      <nav>
-        <ul className="space-y-4">
-          {role === 'patient' && (
-            <>
-              <li className="hover:bg-slate-700 p-2 rounded cursor-pointer">👤 Profile</li>
-              <li className="hover:bg-slate-700 p-2 rounded cursor-pointer">🎫 My Tickets</li>
-              <li className="hover:bg-slate-700 p-2 rounded cursor-pointer">➕ Create Ticket</li>
-            </>
-          )}
-          {role === 'department' && (
-            <>
-              <li className="hover:bg-slate-700 p-2 rounded cursor-pointer">🏠 Dashboard</li>
-              <li className="hover:bg-slate-700 p-2 rounded cursor-pointer">🎫 Tickets</li>
-              <li className="hover:bg-slate-700 p-2 rounded cursor-pointer">📝 Raise Issue</li>
-            </>
-          )}
-          {role === 'admin' && (
-            <>
-              <li className="hover:bg-slate-700 p-2 rounded cursor-pointer">🏠 Dashboard</li>
-              <li className="hover:bg-slate-700 p-2 rounded cursor-pointer">🎫 Tickets</li>
-              <li className="hover:bg-slate-700 p-2 rounded cursor-pointer">👷 Casuals</li>
-              <li className="hover:bg-slate-700 p-2 rounded cursor-pointer">📊 Reports</li>
-              <li className="hover:bg-slate-700 p-2 rounded cursor-pointer">⚙ Settings</li>
-            </>
-          )}
-          {role === 'casual' && (
-            <>
-              <li className="hover:bg-slate-700 p-2 rounded cursor-pointer">🏠 Dashboard</li>
-              <li className="hover:bg-slate-700 p-2 rounded cursor-pointer">🎫 My Tasks</li>
-              <li className="hover:bg-slate-700 p-2 rounded cursor-pointer">📝 Update Status</li>
-            </>
-          )}
+      <nav className="sidebar-nav">
+        <ul>
+          {currentMenu.map((item) => (
+            <li key={item.id}>
+              <button
+                className={activeItem === item.id ? 'active' : ''}
+                onClick={() => setActiveItem(item.id)}
+              >
+                <span>{item.icon}</span>
+                <span>{item.label}</span>
+              </button>
+            </li>
+          ))}
+          <li className="sidebar-logout">
+            <button
+              className="sidebar-logout-btn"
+              onClick={handleLogout}
+            >
+              <span>🚪</span>
+              <span>Logout</span>
+            </button>
+          </li>
         </ul>
       </nav>
     </aside>

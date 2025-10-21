@@ -1,0 +1,166 @@
+/* Hospital Card Component - Calming, Professional Design */
+:root {
+  --hospital-primary: #2563eb;
+  --hospital-secondary: #10b981;
+  --hospital-accent: #f59e0b;
+  --hospital-success: #059669;
+  --hospital-warning: #d97706;
+  --hospital-error: #dc2626;
+  --hospital-info: #0891b2;
+  --hospital-background: #f8fafc;
+  --hospital-surface: #ffffff;
+  --hospital-text-primary: #1e293b;
+  --hospital-text-secondary: #64748b;
+  --hospital-border: #e2e8f0;
+  --hospital-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+  --hospital-shadow-hover: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+}
+
+/* Base Card Styles */
+.card {
+  background: var(--hospital-surface);
+  border-radius: 12px;
+  border: 1px solid var(--hospital-border);
+  box-shadow: var(--hospital-shadow);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+}
+
+/* Card Variants */
+.card--default {
+  padding: 20px;
+}
+
+.card--compact {
+  padding: 16px;
+}
+
+.card--elevated {
+  box-shadow: var(--hospital-shadow-hover);
+}
+
+.card--bordered {
+  border: 2px solid var(--hospital-border);
+}
+
+.card--success {
+  border-left: 4px solid var(--hospital-success);
+  background: linear-gradient(135deg, #f0fdf4 0%, #ffffff 100%);
+}
+
+.card--warning {
+  border-left: 4px solid var(--hospital-warning);
+  background: linear-gradient(135deg, #fffbeb 0%, #ffffff 100%);
+}
+
+.card--error {
+  border-left: 4px solid var(--hospital-error);
+  background: linear-gradient(135deg, #fef2f2 0%, #ffffff 100%);
+}
+
+.card--info {
+  border-left: 4px solid var(--hospital-info);
+  background: linear-gradient(135deg, #ecfeff 0%, #ffffff 100%);
+}
+
+/* Interactive Cards */
+.card--interactive {
+  cursor: pointer;
+  user-select: none;
+}
+
+.card--interactive:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--hospital-shadow-hover);
+  border-color: var(--hospital-primary);
+}
+
+.card--interactive:active {
+  transform: translateY(0);
+  transition-duration: 0.1s;
+}
+
+/* Card Content Spacing */
+.card__header {
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--hospital-border);
+}
+
+.card__title {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--hospital-text-primary);
+  margin: 0 0 4px 0;
+}
+
+.card__subtitle {
+  font-size: 14px;
+  color: var(--hospital-text-secondary);
+  margin: 0;
+}
+
+.card__content {
+  margin-bottom: 16px;
+}
+
+.card__footer {
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px solid var(--hospital-border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .card {
+    margin-bottom: 12px;
+  }
+
+  .card--default {
+    padding: 16px;
+  }
+
+  .card--compact {
+    padding: 12px;
+  }
+
+  .card__footer {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+}
+
+/* Animation Classes */
+.card--fade-in {
+  animation: cardFadeIn 0.3s ease-out;
+}
+
+@keyframes cardFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.card--slide-in {
+  animation: cardSlideIn 0.4s ease-out;
+}
+
+@keyframes cardSlideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}

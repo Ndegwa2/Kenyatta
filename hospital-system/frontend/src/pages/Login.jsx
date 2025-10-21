@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { auth } from '../services/auth';
+import './Login.css';
 
 const Login = () => {
   const [username, setUsername] = useState('');
@@ -41,14 +42,18 @@ const Login = () => {
   const sampleCredentials = [
     { role: 'Admin', username: 'admin@hospital.com', password: 'admin123' },
     { role: 'Patient', username: 'patient@hospital.com', password: 'patient123' },
-    { role: 'Department', username: 'dept@hospital.com', password: 'dept123' },
+    { role: 'Emergency Dept', username: 'emergency@hospital.com', password: 'dept123' },
+    { role: 'Cardiology Dept', username: 'cardiology@hospital.com', password: 'dept123' },
     { role: 'Casual Worker', username: 'casual@hospital.com', password: 'casual123' }
   ];
 
   return (
     <div className="login">
-      <h2>Hospital Management System</h2>
-      <form onSubmit={handleLogin}>
+      <div className="login-header">
+        <h2>Hospital Management System</h2>
+        <p className="login-subtitle">SOLU-HMS</p>
+      </div>
+      <form onSubmit={handleLogin} className="login-form">
         <div className="form-group">
           <input
             type="text"
@@ -70,7 +75,7 @@ const Login = () => {
           />
         </div>
         {error && (
-          <div style={{ color: '#e74c3c', marginBottom: '1rem', textAlign: 'center' }}>
+          <div className="error-message">
             {error}
           </div>
         )}
