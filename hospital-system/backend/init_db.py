@@ -538,7 +538,362 @@ def init_database():
             workflow_id=maintenance_workflow.id,
             created_by=admin.id
         )
-        db.session.add(maintenance_template)
+        # Create Patient Care Follow-up Workflow
+        followup_workflow = Workflow(
+            name="Patient Care Follow-up Workflow",
+            description="Ensures timely follow-up on patient care issues and medication concerns",
+            category="ticket",
+            created_by=admin.id
+        )
+        db.session.add(followup_workflow)
+        db.session.commit()
+
+        # Patient care workflow steps
+        followup_trigger = WorkflowStep(
+            workflow_id=followup_workflow.id,
+            step_order=1,
+            name="Patient Care Issue Reported",
+            description="Trigger when patient reports care or medication issues",
+            step_type="trigger",
+            config=json.dumps({
+                "trigger_type": "ticket_created",
+                "conditions": [
+                    {"type": "category_match", "value": "medical"}
+                ]
+            })
+        )
+        db.session.add(followup_trigger)
+
+        followup_condition = WorkflowStep(
+            workflow_id=followup_workflow.id,
+            step_order=2,
+            name="Check Priority Level",
+            description="Route based on urgency of patient care issue",
+            step_type="condition",
+            config=json.dumps({
+                "condition_type": "priority_check",
+                "operator": "greater_than",
+                "priority": "medium"
+            })
+        )
+        db.session.add(followup_condition)
+
+        followup_action = WorkflowStep(
+            workflow_id=followup_workflow.id,
+            step_order=3,
+            name="Assign to Care Coordinator",
+            description="Assign high-priority care issues to nursing supervisor",
+            step_type="action",
+            config=json.dumps({
+                "action_type": "assign_ticket",
+                "assignment_rule": "specific_user",
+                "user_id": requester1.id  # Nurse supervisor
+            })
+        )
+        db.session.add(followup_action)
+
+        followup_condition.next_step_id = followup_action.id
+        db.session.commit()
+
+        # Create Equipment Failure Workflow
+        equipment_workflow = Workflow(
+            name="Critical Equipment Failure Workflow",
+            description="Handles urgent medical equipment failures with immediate response",
+            category="ticket",
+            created_by=admin.id
+        )
+        db.session.add(equipment_workflow)
+        db.session.commit()
+
+        # Equipment failure workflow steps
+        equip_trigger = WorkflowStep(
+            workflow_id=equipment_workflow.id,
+            step_order=1,
+            name="Equipment Failure Reported",
+            description="Trigger when critical medical equipment fails",
+            step_type="trigger",
+            config=json.dumps({
+                "trigger_type": "ticket_created",
+                "conditions": [
+                    {"type": "category_match", "value": "facilities"},
+                    {"type": "priority_match", "value": "high"}
+                ]
+            })
+        )
+        db.session.add(equip_trigger)
+
+        equip_condition = WorkflowStep(
+            workflow_id=equipment_workflow.id,
+            step_order=2,
+            name="Check Safety Impact",
+            description="Determine if equipment failure affects patient safety",
+            step_type="condition",
+            config=json.dumps({
+                "condition_type": "status_check",
+                "status": "open"  # All high priority equipment issues are treated as safety concerns
+            })
+        )
+        db.session.add(equip_condition)
+
+        equip_action = WorkflowStep(
+            workflow_id=equipment_workflow.id,
+            step_order=3,
+            name="Emergency Equipment Response",
+            description="Assign to senior technician and escalate priority",
+            step_type="action",
+            config=json.dumps({
+                "action_type": "escalate_ticket"
+            })
+        )
+        db.session.add(equip_action)
+
+        equip_condition.next_step_id = equip_action.id
+        db.session.commit()
+
+        # Create Administrative Escalation Workflow
+        admin_workflow = Workflow(
+            name="Administrative Escalation Workflow",
+            description="Handles billing, insurance, and administrative complaints with proper escalation",
+            category="ticket",
+            created_by=admin.id
+        )
+        db.session.add(admin_workflow)
+        db.session.commit()
+
+        # Administrative workflow steps
+        admin_trigger = WorkflowStep(
+            workflow_id=admin_workflow.id,
+            step_order=1,
+            name="Administrative Issue Reported",
+            description="Trigger when administrative or billing issues are reported",
+            step_type="trigger",
+            config=json.dumps({
+                "trigger_type": "ticket_created",
+                "conditions": [
+                    {"type": "category_match", "value": "administrative"}
+                ]
+            })
+        )
+        db.session.add(admin_trigger)
+
+        admin_condition = WorkflowStep(
+            workflow_id=admin_workflow.id,
+            step_order=2,
+            name="Check Resolution Time",
+            description="Monitor if issue remains unresolved after 24 hours",
+            step_type="condition",
+            config=json.dumps({
+                "condition_type": "time_elapsed",
+                "hours": 24
+            })
+        )
+        db.session.add(admin_condition)
+
+        admin_action = WorkflowStep(
+            workflow_id=admin_workflow.id,
+            step_order=3,
+            name="Escalate to Management",
+            description="Escalate unresolved administrative issues to hospital management",
+            step_type="action",
+            config=json.dumps({
+                "action_type": "send_notification",
+                "user_id": admin.id,
+                "title": "Administrative Issue Escalation",
+                "message": "Administrative issue requires management attention",
+                "notification_type": "warning"
+            })
+        )
+        db.session.add(admin_action)
+
+        admin_condition.next_step_id = admin_action.id
+        db.session.commit()
+
+        # Create Patient Care Follow-up Template
+        care_template = TicketTemplate(
+            name="Patient Care Follow-up",
+            description="Report patient care issues, medication concerns, or treatment follow-up needs",
+            category="medical",
+            priority="medium",
+            department_id=emergency_dept.id,
+            custom_fields=json.dumps({
+                "patient_room": {
+                    "type": "text",
+                    "label": "Patient Room Number",
+                    "placeholder": "Room/building where patient is located",
+                    "required": True
+                },
+                "care_type": {
+                    "type": "select",
+                    "label": "Type of Care Issue",
+                    "options": [
+                        {"value": "medication", "label": "Medication Issue"},
+                        {"value": "treatment", "label": "Treatment Concern"},
+                        {"value": "nursing_care", "label": "Nursing Care"},
+                        {"value": "follow_up", "label": "Follow-up Required"},
+                        {"value": "other", "label": "Other"}
+                    ],
+                    "required": True
+                },
+                "severity": {
+                    "type": "select",
+                    "label": "Severity Level",
+                    "options": [
+                        {"value": "mild", "label": "Mild - Monitor"},
+                        {"value": "moderate", "label": "Moderate - Address Soon"},
+                        {"value": "severe", "label": "Severe - Immediate Attention"}
+                    ],
+                    "required": True
+                },
+                "description": {
+                    "type": "textarea",
+                    "label": "Detailed Description",
+                    "placeholder": "Describe the care issue in detail",
+                    "required": True
+                },
+                "immediate_action_needed": {
+                    "type": "select",
+                    "label": "Immediate Action Required",
+                    "options": [
+                        {"value": "yes", "label": "Yes - Immediate intervention needed"},
+                        {"value": "no", "label": "No - Can be addressed in normal timeframe"}
+                    ],
+                    "required": True
+                }
+            }),
+            workflow_id=followup_workflow.id,
+            created_by=admin.id
+        )
+        db.session.add(care_template)
+
+        # Create Critical Equipment Failure Template
+        equip_template = TicketTemplate(
+            name="Critical Equipment Failure",
+            description="Report failures of critical medical equipment affecting patient care",
+            category="facilities",
+            priority="high",
+            department_id=maintenance_dept.id,
+            custom_fields=json.dumps({
+                "equipment_name": {
+                    "type": "text",
+                    "label": "Equipment Name/Model",
+                    "placeholder": "e.g., MRI Machine, X-Ray Unit, Ventilator",
+                    "required": True
+                },
+                "location": {
+                    "type": "text",
+                    "label": "Equipment Location",
+                    "placeholder": "Room/department where equipment is located",
+                    "required": True
+                },
+                "failure_type": {
+                    "type": "select",
+                    "label": "Type of Failure",
+                    "options": [
+                        {"value": "power_failure", "label": "Power/Electrical Failure"},
+                        {"value": "mechanical", "label": "Mechanical Breakdown"},
+                        {"value": "software_error", "label": "Software/Computer Error"},
+                        {"value": "calibration", "label": "Calibration/Accuracy Issue"},
+                        {"value": "other", "label": "Other"}
+                    ],
+                    "required": True
+                },
+                "patient_impact": {
+                    "type": "select",
+                    "label": "Patient Care Impact",
+                    "options": [
+                        {"value": "no_impact", "label": "No current impact"},
+                        {"value": "delayed_care", "label": "Delayed care/treatment"},
+                        {"value": "alternative_needed", "label": "Alternative equipment needed"},
+                        {"value": "critical_backup", "label": "Critical - backup equipment required"}
+                    ],
+                    "required": True
+                },
+                "error_messages": {
+                    "type": "textarea",
+                    "label": "Error Messages/Codes",
+                    "placeholder": "Any error codes, messages, or symptoms observed",
+                    "required": False
+                },
+                "backup_available": {
+                    "type": "select",
+                    "label": "Backup Equipment Available",
+                    "options": [
+                        {"value": "yes", "label": "Yes - backup is available"},
+                        {"value": "no", "label": "No - no backup available"},
+                        {"value": "unknown", "label": "Unknown"}
+                    ],
+                    "required": True
+                }
+            }),
+            workflow_id=equipment_workflow.id,
+            created_by=admin.id
+        )
+        db.session.add(equip_template)
+
+        # Create Administrative Complaint Template
+        admin_template = TicketTemplate(
+            name="Administrative Complaint",
+            description="Report billing issues, insurance problems, or administrative concerns",
+            category="administrative",
+            priority="medium",
+            department_id=cardiology_dept.id,  # Administrative department
+            custom_fields=json.dumps({
+                "complaint_type": {
+                    "type": "select",
+                    "label": "Type of Complaint",
+                    "options": [
+                        {"value": "billing_error", "label": "Billing/Invoicing Error"},
+                        {"value": "insurance_issue", "label": "Insurance Claim Problem"},
+                        {"value": "appointment_scheduling", "label": "Appointment Scheduling Issue"},
+                        {"value": "staff_conduct", "label": "Staff Conduct/Behavior"},
+                        {"value": "facility_cleanliness", "label": "Facility Cleanliness"},
+                        {"value": "communication", "label": "Communication Problem"},
+                        {"value": "other", "label": "Other"}
+                    ],
+                    "required": True
+                },
+                "date_of_incident": {
+                    "type": "date",
+                    "label": "Date of Incident",
+                    "required": True
+                },
+                "involved_staff": {
+                    "type": "text",
+                    "label": "Staff Member(s) Involved",
+                    "placeholder": "Name(s) of staff involved (if applicable)",
+                    "required": False
+                },
+                "financial_impact": {
+                    "type": "select",
+                    "label": "Financial Impact",
+                    "options": [
+                        {"value": "none", "label": "No financial impact"},
+                        {"value": "under_100", "label": "Under $100"},
+                        {"value": "100_500", "label": "$100 - $500"},
+                        {"value": "over_500", "label": "Over $500"}
+                    ],
+                    "required": True
+                },
+                "previous_contact": {
+                    "type": "select",
+                    "label": "Previous Contact Attempted",
+                    "options": [
+                        {"value": "yes", "label": "Yes - already contacted department"},
+                        {"value": "no", "label": "No - first contact"}
+                    ],
+                    "required": True
+                },
+                "resolution_requested": {
+                    "type": "textarea",
+                    "label": "Requested Resolution",
+                    "placeholder": "What outcome are you seeking?",
+                    "required": True
+                }
+            }),
+            workflow_id=admin_workflow.id,
+            created_by=admin.id
+        )
+        db.session.add(admin_template)
         db.session.commit()
 
         print("\n✅ Maintenance Database initialized successfully!")
