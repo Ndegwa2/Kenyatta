@@ -305,6 +305,588 @@ export default function ElectricianDashboard() {
                         </>
                     )}
 
+                    {currentView === 'work-orders' && (
+                        <>
+                            <div className="page-header">
+                                <h2>📋 Work Orders</h2>
+                                <button className="btn btn-primary">+ New Work Order</button>
+                            </div>
+
+                            <div className="filters-section">
+                                <div className="filter-group">
+                                    <label>Status:</label>
+                                    <select>
+                                        <option>All</option>
+                                        <option>Open</option>
+                                        <option>In Progress</option>
+                                        <option>Completed</option>
+                                    </select>
+                                </div>
+                                <div className="filter-group">
+                                    <label>Priority:</label>
+                                    <select>
+                                        <option>All</option>
+                                        <option>High</option>
+                                        <option>Medium</option>
+                                        <option>Low</option>
+                                    </select>
+                                </div>
+                                <div className="filter-group">
+                                    <label>Category:</label>
+                                    <select>
+                                        <option>All</option>
+                                        <option>Electrical</option>
+                                        <option>Mechanical</option>
+                                        <option>Plumbing</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div className="work-orders-grid">
+                                {workOrders.map(workOrder => (
+                                    <div key={workOrder.id} className="work-order-card" onClick={() => viewWorkOrderDetails(workOrder)}>
+                                        <div className="work-order-header">
+                                            <h4>{workOrder.title}</h4>
+                                            <span className={`status-badge status-${workOrder.status}`}>
+                                                {workOrder.status.replace('_', ' ')}
+                                            </span>
+                                        </div>
+                                        <div className="work-order-details">
+                                            <p><strong>Location:</strong> {workOrder.location}</p>
+                                            <p><strong>Priority:</strong> {workOrder.priority}</p>
+                                            <p><strong>Assigned:</strong> {workOrder.assigned_to || 'Unassigned'}</p>
+                                            <p><strong>ETA:</strong> {workOrder.estimated_hours ? `${workOrder.estimated_hours}h` : 'TBD'}</p>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </>
+                    )}
+
+                    {currentView === 'preventive-maintenance' && (
+                        <>
+                            <div className="page-header">
+                                <h2>🛠️ Preventive Maintenance Schedule</h2>
+                                <button className="btn btn-primary">+ Schedule Maintenance</button>
+                            </div>
+
+                            <div className="maintenance-calendar">
+                                <div className="calendar-header">
+                                    <h3>Upcoming Maintenance Tasks</h3>
+                                    <div className="calendar-nav">
+                                        <button>&lt; Previous</button>
+                                        <span>October 2025</span>
+                                        <button>Next &gt;</button>
+                                    </div>
+                                </div>
+
+                                <div className="maintenance-schedule">
+                                    {preventiveMaintenance.map(item => (
+                                        <div key={item.id} className="maintenance-schedule-item">
+                                            <div className="schedule-date">{item.date}</div>
+                                            <div className="schedule-content">
+                                                <h4>{item.title}</h4>
+                                                <p>Assigned: {item.assigned}</p>
+                                                <div className="schedule-actions">
+                                                    <button className="btn btn-sm btn-outline">Mark Complete</button>
+                                                    <button className="btn btn-sm btn-outline">Reschedule</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+
+                            <div className="maintenance-stats">
+                                <div className="stat-card">
+                                    <h4>Completed This Month</h4>
+                                    <div className="stat-value">12</div>
+                                </div>
+                                <div className="stat-card">
+                                    <h4>Overdue Tasks</h4>
+                                    <div className="stat-value overdue">2</div>
+                                </div>
+                                <div className="stat-card">
+                                    <h4>Next Due</h4>
+                                    <div className="stat-value">24 Oct</div>
+                                </div>
+                            </div>
+                        </>
+                    )}
+
+                    {currentView === 'generators' && (
+                        <>
+                            <div className="page-header">
+                                <h2>⚡ Generators</h2>
+                                <button className="btn btn-primary">+ Add Generator</button>
+                            </div>
+
+                            <div className="generators-grid">
+                                <div className="generator-card">
+                                    <div className="generator-header">
+                                        <h3>Generator 1 - Main Building</h3>
+                                        <div className="generator-status online">Online</div>
+                                    </div>
+                                    <div className="generator-metrics">
+                                        <div className="metric">
+                                            <span className="metric-label">Fuel Level:</span>
+                                            <span className="metric-value">85%</span>
+                                        </div>
+                                        <div className="metric">
+                                            <span className="metric-label">Runtime:</span>
+                                            <span className="metric-value">2.5h</span>
+                                        </div>
+                                        <div className="metric">
+                                            <span className="metric-label">Load:</span>
+                                            <span className="metric-value">60%</span>
+                                        </div>
+                                    </div>
+                                    <div className="generator-actions">
+                                        <button className="btn btn-sm btn-outline">Start</button>
+                                        <button className="btn btn-sm btn-outline">Stop</button>
+                                        <button className="btn btn-sm btn-outline">Maintenance</button>
+                                    </div>
+                                </div>
+
+                                <div className="generator-card">
+                                    <div className="generator-header">
+                                        <h3>Generator 2 - Emergency Wing</h3>
+                                        <div className="generator-status standby">Standby</div>
+                                    </div>
+                                    <div className="generator-metrics">
+                                        <div className="metric">
+                                            <span className="metric-label">Fuel Level:</span>
+                                            <span className="metric-value">92%</span>
+                                        </div>
+                                        <div className="metric">
+                                            <span className="metric-label">Runtime:</span>
+                                            <span className="metric-value">0.0h</span>
+                                        </div>
+                                        <div className="metric">
+                                            <span className="metric-label">Load:</span>
+                                            <span className="metric-value">0%</span>
+                                        </div>
+                                    </div>
+                                    <div className="generator-actions">
+                                        <button className="btn btn-sm btn-outline">Start</button>
+                                        <button className="btn btn-sm btn-outline">Stop</button>
+                                        <button className="btn btn-sm btn-outline">Maintenance</button>
+                                    </div>
+                                </div>
+
+                                <div className="generator-card">
+                                    <div className="generator-header">
+                                        <h3>Generator 3 - ICU</h3>
+                                        <div className="generator-status maintenance">Maintenance</div>
+                                    </div>
+                                    <div className="generator-metrics">
+                                        <div className="metric">
+                                            <span className="metric-label">Fuel Level:</span>
+                                            <span className="metric-value">45%</span>
+                                        </div>
+                                        <div className="metric">
+                                            <span className="metric-label">Last Service:</span>
+                                            <span className="metric-value">15 Oct</span>
+                                        </div>
+                                        <div className="metric">
+                                            <span className="metric-label">Next Service:</span>
+                                            <span className="metric-value">15 Nov</span>
+                                        </div>
+                                    </div>
+                                    <div className="generator-actions">
+                                        <button className="btn btn-sm btn-outline">Complete Maintenance</button>
+                                        <button className="btn btn-sm btn-outline">Schedule Service</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="generator-alerts">
+                                <h3>⚠️ Alerts</h3>
+                                <div className="alert-item warning">
+                                    <span>Generator 3 fuel level low</span>
+                                    <button className="btn btn-sm">Refuel</button>
+                                </div>
+                                <div className="alert-item info">
+                                    <span>Monthly test scheduled for tomorrow</span>
+                                    <button className="btn btn-sm">View Schedule</button>
+                                </div>
+                            </div>
+                        </>
+                    )}
+
+                    {currentView === 'ups-power' && (
+                        <>
+                            <div className="page-header">
+                                <h2>🔋 UPS & Power Systems</h2>
+                                <button className="btn btn-primary">+ Add UPS</button>
+                            </div>
+
+                            <div className="ups-grid">
+                                <div className="ups-card">
+                                    <div className="ups-header">
+                                        <h3>Main UPS Rack A</h3>
+                                        <div className="ups-status healthy">Healthy</div>
+                                    </div>
+                                    <div className="ups-metrics">
+                                        <div className="metric">
+                                            <span className="metric-label">Battery Health:</span>
+                                            <span className="metric-value">95%</span>
+                                        </div>
+                                        <div className="metric">
+                                            <span className="metric-label">Load:</span>
+                                            <span className="metric-value">45%</span>
+                                        </div>
+                                        <div className="metric">
+                                            <span className="metric-label">Runtime:</span>
+                                            <span className="metric-value">8.2h</span>
+                                        </div>
+                                    </div>
+                                    <div className="battery-chart">
+                                        <div className="battery-level" style={{ width: '95%' }}></div>
+                                    </div>
+                                </div>
+
+                                <div className="ups-card">
+                                    <div className="ups-header">
+                                        <h3>Server Room UPS</h3>
+                                        <div className="ups-status warning">Warning</div>
+                                    </div>
+                                    <div className="ups-metrics">
+                                        <div className="metric">
+                                            <span className="metric-label">Battery Health:</span>
+                                            <span className="metric-value">78%</span>
+                                        </div>
+                                        <div className="metric">
+                                            <span className="metric-label">Load:</span>
+                                            <span className="metric-value">72%</span>
+                                        </div>
+                                        <div className="metric">
+                                            <span className="metric-label">Runtime:</span>
+                                            <span className="metric-value">4.1h</span>
+                                        </div>
+                                    </div>
+                                    <div className="battery-chart">
+                                        <div className="battery-level warning" style={{ width: '78%' }}></div>
+                                    </div>
+                                </div>
+
+                                <div className="ups-card">
+                                    <div className="ups-header">
+                                        <h3>ICU Critical Systems</h3>
+                                        <div className="ups-status critical">Critical</div>
+                                    </div>
+                                    <div className="ups-metrics">
+                                        <div className="metric">
+                                            <span className="metric-label">Battery Health:</span>
+                                            <span className="metric-value">45%</span>
+                                        </div>
+                                        <div className="metric">
+                                            <span className="metric-label">Load:</span>
+                                            <span className="metric-value">85%</span>
+                                        </div>
+                                        <div className="metric">
+                                            <span className="metric-label">Runtime:</span>
+                                            <span className="metric-value">2.3h</span>
+                                        </div>
+                                    </div>
+                                    <div className="battery-chart">
+                                        <div className="battery-level critical" style={{ width: '45%' }}></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="power-distribution">
+                                <h3>🏗️ Power Distribution</h3>
+                                <div className="distribution-panel">
+                                    <div className="panel-section">
+                                        <h4>Main Distribution Board</h4>
+                                        <div className="breaker-status">
+                                            <div className="breaker online">Phase A: 220V</div>
+                                            <div className="breaker online">Phase B: 218V</div>
+                                            <div className="breaker online">Phase C: 222V</div>
+                                        </div>
+                                    </div>
+                                    <div className="panel-section">
+                                        <h4>Emergency Circuits</h4>
+                                        <div className="breaker-status">
+                                            <div className="breaker online">ICU: Active</div>
+                                            <div className="breaker online">Operating Rooms: Active</div>
+                                            <div className="breaker standby">Backup Generator: Standby</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </>
+                    )}
+
+                    {currentView === 'assets' && (
+                        <>
+                            <div className="page-header">
+                                <h2>📦 Assets Management</h2>
+                                <button className="btn btn-primary">+ Add Asset</button>
+                            </div>
+
+                            <div className="assets-filters">
+                                <div className="filter-group">
+                                    <label>Category:</label>
+                                    <select>
+                                        <option>All</option>
+                                        <option>Electrical</option>
+                                        <option>Mechanical</option>
+                                        <option>HVAC</option>
+                                    </select>
+                                </div>
+                                <div className="filter-group">
+                                    <label>Location:</label>
+                                    <select>
+                                        <option>All</option>
+                                        <option>Main Building</option>
+                                        <option>Emergency Wing</option>
+                                        <option>ICU</option>
+                                    </select>
+                                </div>
+                                <div className="filter-group">
+                                    <label>Status:</label>
+                                    <select>
+                                        <option>All</option>
+                                        <option>Operational</option>
+                                        <option>Maintenance</option>
+                                        <option>Out of Service</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div className="assets-grid">
+                                {assetMap.concat([
+                                    { id: 3, name: 'Air Conditioning Unit 1', status: 'ok', location: 'Main Building', category: 'HVAC' },
+                                    { id: 4, name: 'Elevator Control Panel', status: 'attention', location: 'Emergency Wing', category: 'Electrical' },
+                                    { id: 5, name: 'Water Pump Station', status: 'critical', location: 'Basement', category: 'Mechanical' },
+                                    { id: 6, name: 'Fire Alarm System', status: 'ok', location: 'All Floors', category: 'Safety' }
+                                ]).map(asset => (
+                                    <div key={asset.id} className="asset-card">
+                                        <div className="asset-header">
+                                            <h4>{asset.name}</h4>
+                                            <div className={`asset-status ${asset.status === 'ok' ? 'ok' : asset.status === 'attention' ? 'attention' : 'critical'}`}>
+                                                {asset.status === 'ok' ? 'OK' : asset.status === 'attention' ? 'Attention' : 'Critical'}
+                                            </div>
+                                        </div>
+                                        <div className="asset-details">
+                                            <p><strong>Location:</strong> {asset.location || 'TBD'}</p>
+                                            <p><strong>Category:</strong> {asset.category || 'Electrical'}</p>
+                                            <p><strong>Last Service:</strong> 15 Oct 2025</p>
+                                            <p><strong>Next Service:</strong> 15 Nov 2025</p>
+                                        </div>
+                                        <div className="asset-actions">
+                                            <button className="btn btn-sm btn-outline">View Details</button>
+                                            <button className="btn btn-sm btn-outline">Schedule Maintenance</button>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+
+                            <div className="asset-map-widget">
+                                <h3>📍 Asset Locations</h3>
+                                <div className="floor-plan">
+                                    <div className="floor-plan-header">Hospital Floor Plan</div>
+                                    <div className="floor-plan-content">
+                                        <div className="asset-marker" style={{ top: '20%', left: '30%' }} title="Generator 1">⚡</div>
+                                        <div className="asset-marker" style={{ top: '40%', left: '60%' }} title="UPS Rack">🔋</div>
+                                        <div className="asset-marker" style={{ top: '70%', left: '50%' }} title="AC Unit">❄️</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </>
+                    )}
+
+                    {currentView === 'reports' && (
+                        <>
+                            <div className="page-header">
+                                <h2>📊 Reports & Analytics</h2>
+                                <button className="btn btn-primary">Generate Report</button>
+                            </div>
+
+                            <div className="reports-grid">
+                                <div className="report-card">
+                                    <h3>⚡ Power Consumption Report</h3>
+                                    <p>Monthly electricity usage analysis</p>
+                                    <div className="report-metrics">
+                                        <div className="metric">
+                                            <span className="metric-label">This Month:</span>
+                                            <span className="metric-value">12,450 kWh</span>
+                                        </div>
+                                        <div className="metric">
+                                            <span className="metric-label">vs Last Month:</span>
+                                            <span className="metric-value up">+8.2%</span>
+                                        </div>
+                                    </div>
+                                    <button className="btn btn-outline">View Details</button>
+                                </div>
+
+                                <div className="report-card">
+                                    <h3>🛠️ Maintenance Performance</h3>
+                                    <p>Work order completion rates</p>
+                                    <div className="report-metrics">
+                                        <div className="metric">
+                                            <span className="metric-label">Completed:</span>
+                                            <span className="metric-value">89%</span>
+                                        </div>
+                                        <div className="metric">
+                                            <span className="metric-label">On Time:</span>
+                                            <span className="metric-value">76%</span>
+                                        </div>
+                                    </div>
+                                    <button className="btn btn-outline">View Details</button>
+                                </div>
+
+                                <div className="report-card">
+                                    <h3>⚠️ System Alerts Summary</h3>
+                                    <p>Critical alerts and incidents</p>
+                                    <div className="report-metrics">
+                                        <div className="metric">
+                                            <span className="metric-label">Critical:</span>
+                                            <span className="metric-value critical">3</span>
+                                        </div>
+                                        <div className="metric">
+                                            <span className="metric-label">Warnings:</span>
+                                            <span className="metric-value warning">12</span>
+                                        </div>
+                                    </div>
+                                    <button className="btn btn-outline">View Details</button>
+                                </div>
+
+                                <div className="report-card">
+                                    <h3>💰 Cost Analysis</h3>
+                                    <p>Maintenance and energy costs</p>
+                                    <div className="report-metrics">
+                                        <div className="metric">
+                                            <span className="metric-label">Monthly Cost:</span>
+                                            <span className="metric-value">$8,450</span>
+                                        </div>
+                                        <div className="metric">
+                                            <span className="metric-label">Budget Used:</span>
+                                            <span className="metric-value">67%</span>
+                                        </div>
+                                    </div>
+                                    <button className="btn btn-outline">View Details</button>
+                                </div>
+                            </div>
+
+                            <div className="charts-section">
+                                <div className="chart-container">
+                                    <h3>Energy Usage Trend</h3>
+                                    <div className="energy-trend-chart">
+                                        <svg viewBox="0 0 400 200">
+                                            <polyline points="0,150 50,140 100,130 150,160 200,120 250,110 300,130 350,100 400,90" stroke="#3498db" fill="none" strokeWidth="2"/>
+                                        </svg>
+                                    </div>
+                                </div>
+
+                                <div className="chart-container">
+                                    <h3>Equipment Uptime</h3>
+                                    <div className="uptime-chart">
+                                        <div className="uptime-bar">
+                                            <div className="uptime-fill" style={{ width: '96%' }}></div>
+                                            <span>96% Uptime</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </>
+                    )}
+
+                    {currentView === 'settings' && (
+                        <>
+                            <div className="page-header">
+                                <h2>⚙️ Settings</h2>
+                            </div>
+
+                            <div className="settings-sections">
+                                <div className="settings-section">
+                                    <h3>🔔 Notifications</h3>
+                                    <div className="setting-item">
+                                        <label>
+                                            <input type="checkbox" defaultChecked />
+                                            Email alerts for critical issues
+                                        </label>
+                                    </div>
+                                    <div className="setting-item">
+                                        <label>
+                                            <input type="checkbox" defaultChecked />
+                                            SMS alerts for emergency situations
+                                        </label>
+                                    </div>
+                                    <div className="setting-item">
+                                        <label>
+                                            <input type="checkbox" />
+                                            Maintenance reminder notifications
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div className="settings-section">
+                                    <h3>📊 Dashboard Preferences</h3>
+                                    <div className="setting-item">
+                                        <label>Refresh Interval:</label>
+                                        <select>
+                                            <option>30 seconds</option>
+                                            <option>1 minute</option>
+                                            <option>5 minutes</option>
+                                            <option>15 minutes</option>
+                                        </select>
+                                    </div>
+                                    <div className="setting-item">
+                                        <label>Default View:</label>
+                                        <select>
+                                            <option>Dashboard</option>
+                                            <option>Work Orders</option>
+                                            <option>Assets</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div className="settings-section">
+                                    <h3>🔧 Maintenance Settings</h3>
+                                    <div className="setting-item">
+                                        <label>Auto-assign work orders:</label>
+                                        <select>
+                                            <option>Yes</option>
+                                            <option>No</option>
+                                        </select>
+                                    </div>
+                                    <div className="setting-item">
+                                        <label>Default priority:</label>
+                                        <select>
+                                            <option>Medium</option>
+                                            <option>High</option>
+                                            <option>Low</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div className="settings-section">
+                                    <h3>👤 Profile Settings</h3>
+                                    <div className="setting-item">
+                                        <label>Display Name:</label>
+                                        <input type="text" defaultValue="Eng. Ndegwa" />
+                                    </div>
+                                    <div className="setting-item">
+                                        <label>Email:</label>
+                                        <input type="email" defaultValue="ndegwa.electrical@hospital.com" />
+                                    </div>
+                                    <div className="setting-item">
+                                        <label>Phone:</label>
+                                        <input type="tel" defaultValue="+254 700 123 456" />
+                                    </div>
+                                </div>
+
+                                <div className="settings-actions">
+                                    <button className="btn btn-primary">Save Changes</button>
+                                    <button className="btn btn-outline">Reset to Defaults</button>
+                                </div>
+                            </div>
+                        </>
+                    )}
+
                     {/* Floating Action Button */}
                     <button className="fab" title="New Work Order">
                         +
