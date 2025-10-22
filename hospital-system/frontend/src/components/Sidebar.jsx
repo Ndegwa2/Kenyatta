@@ -1,9 +1,8 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { auth } from '../services/auth';
 
-const Sidebar = ({ role }) => {
-  const [activeItem, setActiveItem] = useState('Dashboard');
+const Sidebar = ({ role, activeItem, onItemClick }) => {
   const navigate = useNavigate();
 
   const handleLogout = async () => {
@@ -54,7 +53,7 @@ const Sidebar = ({ role }) => {
             <li key={item.id}>
               <button
                 className={activeItem === item.id ? 'active' : ''}
-                onClick={() => setActiveItem(item.id)}
+                onClick={() => onItemClick ? onItemClick(item.id) : null}
               >
                 <span>{item.icon}</span>
                 <span>{item.label}</span>

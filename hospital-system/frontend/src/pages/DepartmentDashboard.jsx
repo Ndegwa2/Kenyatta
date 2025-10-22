@@ -5,10 +5,11 @@ import Card from '../components/Card';
 import { api } from '../services/api';
 
 export default function DepartmentDashboard() {
-   const [tickets, setTickets] = useState([]);
-   const [loading, setLoading] = useState(true);
-   const [error, setError] = useState('');
-   const [showCreateForm, setShowCreateForm] = useState(false);
+    const [tickets, setTickets] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState('');
+    // const [showCreateForm, setShowCreateForm] = useState(false); // No longer needed
+    const [currentView, setCurrentView] = useState('dashboard');
    const [templates, setTemplates] = useState([]);
    const [stats, setStats] = useState({
      totalRequests: 0,
@@ -74,7 +75,7 @@ export default function DepartmentDashboard() {
    const createTicket = async () => {
      try {
        await api.post('/department/ticket/create', newTicket);
-       setShowCreateForm(false);
+       setCurrentView('dashboard');
        setNewTicket({
          title: '',
          description: '',
@@ -104,7 +105,7 @@ export default function DepartmentDashboard() {
        patients_affected: 1,
        time_sensitivity: template.time_sensitivity
      });
-     setShowCreateForm(true);
+     setCurrentView('raise-issue');
    };
 
    const viewTicketComments = async (ticket) => {
@@ -170,48 +171,134 @@ export default function DepartmentDashboard() {
      <div className="dashboard">
        <Navbar />
        <div className="content">
-         <Sidebar role="department" />
+         <Sidebar role="department" activeItem={currentView} onItemClick={setCurrentView} />
          <main>
            <div className="main-header">
              <h2>Nursing Department Dashboard</h2>
-             <button
-               className="btn btn-primary"
-               onClick={() => setShowCreateForm(!showCreateForm)}
-             >
-               {showCreateForm ? 'Cancel' : 'Report Maintenance Issue'}
-             </button>
+             {currentView === 'dashboard' && (
+               <button
+                 className="btn btn-primary"
+                 onClick={() => setCurrentView('raise-issue')}
+               >
+                 Report Maintenance Issue
+               </button>
+             )}
+             {currentView === 'raise-issue' && (
+               <button
+                 className="btn btn-outline"
+                 onClick={() => setCurrentView('dashboard')}
+               >
+                 Cancel
+               </button>
+             )}
            </div>
 
-           {/* Nurse Stats Dashboard */}
-           <div className="grid grid-cols-4 gap-4 mb-4">
-             <Card>
-               <div className="text-center">
-                 <h3 className="text-2xl font-bold text-blue-600">{stats.totalRequests}</h3>
-                 <p className="text-sm text-gray-600">Total Requests</p>
+           {currentView === 'dashboard' && (
+             <>
+               {/* Nurse Stats Dashboard */}
+               <div className="grid grid-cols-4 gap-4 mb-4">
+                 <Card>
+                   <div className="text-center">
+                     <h3 className="text-2xl font-bold text-blue-600">{stats.totalRequests}</h3>
+                     <p className="text-sm text-gray-600">Total Requests</p>
+                   </div>
+                 </Card>
+                 <Card>
+                   <div className="text-center">
+                     <h3 className="text-2xl font-bold text-orange-600">{stats.openRequests}</h3>
+                     <p className="text-sm text-gray-600">Open Requests</p>
+                   </div>
+                 </Card>
+                 <Card>
+                   <div className="text-center">
+                     <h3 className="text-2xl font-bold text-red-600">{stats.criticalRequests}</h3>
+                     <p className="text-sm text-gray-600">Critical Issues</p>
+                   </div>
+                 </Card>
+                 <Card>
+                   <div className="text-center">
+                     <h3 className="text-2xl font-bold text-green-600">{stats.avgResponseTime}h</h3>
+                     <p className="text-sm text-gray-600">Avg Response Time</p>
+                   </div>
+                 </Card>
                </div>
-             </Card>
-             <Card>
-               <div className="text-center">
-                 <h3 className="text-2xl font-bold text-orange-600">{stats.openRequests}</h3>
-                 <p className="text-sm text-gray-600">Open Requests</p>
-               </div>
-             </Card>
-             <Card>
-               <div className="text-center">
-                 <h3 className="text-2xl font-bold text-red-600">{stats.criticalRequests}</h3>
-                 <p className="text-sm text-gray-600">Critical Issues</p>
-               </div>
-             </Card>
-             <Card>
-               <div className="text-center">
-                 <h3 className="text-2xl font-bold text-green-600">{stats.avgResponseTime}h</h3>
-                 <p className="text-sm text-gray-600">Avg Response Time</p>
-               </div>
-             </Card>
-           </div>
 
-           {/* Create Ticket Form */}
-           {showCreateForm && (
+               <h3 className="mb-4">My Maintenance Reports</h3>
+               {tickets.length === 0 ? (
+                 <Card>
+                   <p className="text-center text-secondary">No maintenance reports submitted yet.</p>
+                 </Card>
+               ) : (
+                 tickets.map(ticket => (
+                   <Card key={ticket.id} className="mb-4">
+                     <div className="card__header">
+                       <h4 className="card__title">{ticket.title}</h4>
+                       <div className="flex gap-2">
+                         <span className={`status-badge status-${ticket.status}`}>{ticket.status}</span>
+                         <span className={`status-badge priority-${ticket.priority}`}>{ticket.priority}</span>
+                         <span className={`status-badge category-${ticket.category || 'general'}`}>{ticket.category ? ticket.category.replace('_', ' ') : 'General'}</span>
+                       </div>
+                     </div>
+                     <p className="mb-4">{ticket.description}</p>
+
+                     {/* Enhanced ticket info */}
+                     <div className="grid grid-cols-2 gap-4 mb-4">
+                       {ticket.location_details && (
+                         <div>
+                           <strong>Location:</strong> {ticket.location_details}
+                         </div>
+                       )}
+                       {ticket.equipment_id && (
+                         <div>
+                           <strong>Equipment ID:</strong> {ticket.equipment_id}
+                         </div>
+                       )}
+                       <div>
+                         <strong>Patient Impact:</strong>
+                         <span className={`status-badge impact-${ticket.patient_impact} ml-2`}>
+                           {ticket.patient_impact}
+                         </span>
+                       </div>
+                       <div>
+                         <strong>Time Sensitivity:</strong> {ticket.time_sensitivity ? ticket.time_sensitivity.replace('_', ' ') : 'Not specified'}
+                       </div>
+                     </div>
+
+                     <div className="flex justify-between items-center mb-4">
+                       <small className="text-muted">
+                         Submitted: {new Date(ticket.created_at).toLocaleString()}
+                       </small>
+                       <small className="text-muted">
+                         {ticket.assigned_to ? `Assigned to: ${ticket.assigned_to}` : 'Not yet assigned'}
+                       </small>
+                     </div>
+
+                     {/* Read-only status and comment functionality */}
+                     <div className="flex justify-between items-center">
+                       <div>
+                         <span className="text-muted">
+                           Status: {ticket.status ? ticket.status.replace('_', ' ').toUpperCase() : 'UNKNOWN'}
+                           {ticket.status === 'closed' && ticket.resolved_at && (
+                             <span className="ml-2">
+                               (Resolved: {new Date(ticket.resolved_at).toLocaleString()})
+                             </span>
+                           )}
+                         </span>
+                       </div>
+                       <button
+                         className="btn btn-outline btn-sm"
+                         onClick={() => viewTicketComments(ticket)}
+                       >
+                         💬 Comments
+                       </button>
+                     </div>
+                   </Card>
+                 ))
+               )}
+             </>
+           )}
+
+           {currentView === 'raise-issue' && (
              <Card className="mb-4">
                <h4>Report Maintenance Issue</h4>
 
@@ -314,82 +401,9 @@ export default function DepartmentDashboard() {
                </div>
                <div className="flex gap-2 mt-4">
                  <button className="btn btn-primary" onClick={createTicket}>Submit Report</button>
-                 <button className="btn btn-outline" onClick={() => setShowCreateForm(false)}>Cancel</button>
+                 <button className="btn btn-outline" onClick={() => setCurrentView('dashboard')}>Cancel</button>
                </div>
              </Card>
-           )}
-
-           <h3 className="mb-4">My Maintenance Reports</h3>
-           {tickets.length === 0 ? (
-             <Card>
-               <p className="text-center text-secondary">No maintenance reports submitted yet.</p>
-             </Card>
-           ) : (
-             tickets.map(ticket => (
-               <Card key={ticket.id} className="mb-4">
-                 <div className="card__header">
-                   <h4 className="card__title">{ticket.title}</h4>
-                   <div className="flex gap-2">
-                     <span className={`status-badge status-${ticket.status}`}>{ticket.status}</span>
-                     <span className={`status-badge priority-${ticket.priority}`}>{ticket.priority}</span>
-                     <span className={`status-badge category-${ticket.category}`}>{ticket.category ? ticket.category.replace('_', ' ') : 'General'}</span>
-                   </div>
-                 </div>
-                 <p className="mb-4">{ticket.description}</p>
-
-                 {/* Enhanced ticket info */}
-                 <div className="grid grid-cols-2 gap-4 mb-4">
-                   {ticket.location_details && (
-                     <div>
-                       <strong>Location:</strong> {ticket.location_details}
-                     </div>
-                   )}
-                   {ticket.equipment_id && (
-                     <div>
-                       <strong>Equipment ID:</strong> {ticket.equipment_id}
-                     </div>
-                   )}
-                   <div>
-                     <strong>Patient Impact:</strong>
-                     <span className={`status-badge impact-${ticket.patient_impact} ml-2`}>
-                       {ticket.patient_impact}
-                     </span>
-                   </div>
-                   <div>
-                     <strong>Time Sensitivity:</strong> {ticket.time_sensitivity ? ticket.time_sensitivity.replace('_', ' ') : 'Not specified'}
-                   </div>
-                 </div>
-
-                 <div className="flex justify-between items-center mb-4">
-                   <small className="text-muted">
-                     Submitted: {new Date(ticket.created_at).toLocaleString()}
-                   </small>
-                   <small className="text-muted">
-                     {ticket.assigned_to ? `Assigned to: ${ticket.assigned_to}` : 'Not yet assigned'}
-                   </small>
-                 </div>
-
-                 {/* Read-only status and comment functionality */}
-                 <div className="flex justify-between items-center">
-                   <div>
-                     <span className="text-muted">
-                       Status: {ticket.status.replace('_', ' ').toUpperCase()}
-                       {ticket.status === 'closed' && ticket.resolved_at && (
-                         <span className="ml-2">
-                           (Resolved: {new Date(ticket.resolved_at).toLocaleString()})
-                         </span>
-                       )}
-                     </span>
-                   </div>
-                   <button
-                     className="btn btn-outline btn-sm"
-                     onClick={() => viewTicketComments(ticket)}
-                   >
-                     💬 Comments
-                   </button>
-                 </div>
-               </Card>
-             ))
            )}
 
            {/* Comments Modal */}
