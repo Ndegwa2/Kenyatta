@@ -5,19 +5,37 @@ import { api } from '../services/api';
 import { auth } from '../services/auth';
 import TicketCard from '../components/TicketCard';
 import TicketDetails from '../components/TicketDetails';
+import { Pie, Bar, Line } from 'react-chartjs-2';
+import { Chart as ChartJS, ArcElement, Tooltip, Legend, CategoryScale, LinearScale, BarElement, LineElement, PointElement } from 'chart.js';
+
+ChartJS.register(ArcElement, Tooltip, Legend, CategoryScale, LinearScale, BarElement, LineElement, PointElement);
 
 export default function AdminDashboard() {
-  const navigate = useNavigate();
-  const [active, setActive] = useState("Dashboard");
-  const [tickets, setTickets] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
-  const [selectedTicketId, setSelectedTicketId] = useState(null);
-  const [stats, setStats] = useState({
-    pending: 0,
-    assigned: 0,
-    resolved: 0
-  });
+   const navigate = useNavigate();
+   const [active, setActive] = useState("Dashboard");
+   const [tickets, setTickets] = useState([]);
+   const [loading, setLoading] = useState(true);
+   const [error, setError] = useState('');
+   const [selectedTicketId, setSelectedTicketId] = useState(null);
+   const [stats, setStats] = useState({
+     pending: 0,
+     assigned: 0,
+     resolved: 0,
+     total_users: 0,
+     total_work_orders: 0,
+     total_technicians: 0,
+     total_equipment: 0,
+     total_tickets: 0,
+     open_tickets: 0,
+     closed_tickets: 0,
+     emergency_work_orders: 0,
+     role_distribution: {},
+     weekly_quotas: {},
+     top_performers: [],
+     department_stats: [],
+     performance_metrics: {},
+     recent_activity: {}
+   });
 
   const handleLogout = async () => {
     try {
@@ -39,15 +57,29 @@ export default function AdminDashboard() {
       const ticketsData = await api.get('/admin/tickets');
       // Ensure tickets is always an array
       setTickets(Array.isArray(ticketsData) ? ticketsData : []);
-      
+
       // Fetch stats
       const statsData = await api.get('/admin/stats');
       setStats({
-        pending: statsData.pending || 0,
-        assigned: statsData.assigned || 0,
-        resolved: statsData.resolved || 0
+        pending: statsData.open_tickets || 0,
+        assigned: statsData.total_tickets - statsData.open_tickets - statsData.closed_tickets || 0,
+        resolved: statsData.closed_tickets || 0,
+        total_users: statsData.total_users || 0,
+        total_work_orders: statsData.total_work_orders || 0,
+        total_technicians: statsData.total_technicians || 0,
+        total_equipment: statsData.total_equipment || 0,
+        total_tickets: statsData.total_tickets || 0,
+        open_tickets: statsData.open_tickets || 0,
+        closed_tickets: statsData.closed_tickets || 0,
+        emergency_work_orders: statsData.emergency_work_orders || 0,
+        role_distribution: statsData.role_distribution || {},
+        weekly_quotas: statsData.weekly_quotas || {},
+        top_performers: statsData.top_performers || [],
+        department_stats: statsData.department_stats || [],
+        performance_metrics: statsData.performance_metrics || {},
+        recent_activity: statsData.recent_activity || {}
       });
-      
+
       setLoading(false);
     } catch (err) {
       console.error('Error fetching data:', err);
@@ -230,7 +262,7 @@ export default function AdminDashboard() {
         </div>
 
         {/* Summary cards */}
-        <div style={{ display: 'flex', gap: '20px', marginBottom: '30px' }}>
+        <div style={{ display: 'flex', gap: '20px', marginBottom: '30px', flexWrap: 'wrap' }}>
           <div
             style={{
               width: '180px',
@@ -242,10 +274,10 @@ export default function AdminDashboard() {
             }}
           >
             <div style={{ fontSize: '13px', fontWeight: 600, color: '#166534', marginBottom: '8px' }}>
-              Pending Tickets
+              Total Users
             </div>
             <div style={{ fontSize: '22px', fontWeight: 700, color: '#166534' }}>
-              {stats.pending}
+              {stats.total_users}
             </div>
           </div>
 
@@ -260,10 +292,10 @@ export default function AdminDashboard() {
             }}
           >
             <div style={{ fontSize: '13px', fontWeight: 600, color: '#854d0e', marginBottom: '8px' }}>
-              Assigned
+              Total Tickets
             </div>
             <div style={{ fontSize: '22px', fontWeight: 700, color: '#854d0e' }}>
-              {stats.assigned}
+              {stats.total_tickets}
             </div>
           </div>
 
@@ -278,10 +310,152 @@ export default function AdminDashboard() {
             }}
           >
             <div style={{ fontSize: '13px', fontWeight: 600, color: '#1e3a8a', marginBottom: '8px' }}>
-              Resolved
+              Resolved Tickets
             </div>
             <div style={{ fontSize: '22px', fontWeight: 700, color: '#1e3a8a' }}>
-              {stats.resolved}
+              {stats.closed_tickets}
+            </div>
+          </div>
+
+          <div
+            style={{
+              width: '180px',
+              height: '90px',
+              borderRadius: '10px',
+              background: '#fce7f3',
+              border: '1px solid #fbcfe8',
+              padding: '16px'
+            }}
+          >
+            <div style={{ fontSize: '13px', fontWeight: 600, color: '#be185d', marginBottom: '8px' }}>
+              Active Technicians
+            </div>
+            <div style={{ fontSize: '22px', fontWeight: 700, color: '#be185d' }}>
+              {stats.total_technicians}
+            </div>
+          </div>
+
+          <div
+            style={{
+              width: '180px',
+              height: '90px',
+              borderRadius: '10px',
+              background: '#ecfdf5',
+              border: '1px solid #d1fae5',
+              padding: '16px'
+            }}
+          >
+            <div style={{ fontSize: '13px', fontWeight: 600, color: '#065f46', marginBottom: '8px' }}>
+              Work Orders
+            </div>
+            <div style={{ fontSize: '22px', fontWeight: 700, color: '#065f46' }}>
+              {stats.total_work_orders}
+            </div>
+          </div>
+
+          <div
+            style={{
+              width: '180px',
+              height: '90px',
+              borderRadius: '10px',
+              background: '#fef3c7',
+              border: '1px solid #fde68a',
+              padding: '16px'
+            }}
+          >
+            <div style={{ fontSize: '13px', fontWeight: 600, color: '#92400e', marginBottom: '8px' }}>
+              Emergency Orders
+            </div>
+            <div style={{ fontSize: '22px', fontWeight: 700, color: '#92400e' }}>
+              {stats.emergency_work_orders}
+            </div>
+          </div>
+        </div>
+
+        {/* Charts Section */}
+        <div style={{ display: 'flex', gap: '30px', marginBottom: '30px', flexWrap: 'wrap' }}>
+          {/* Role Distribution Pie Chart */}
+          <div style={{ flex: 1, minWidth: '300px', background: '#fff', borderRadius: '10px', padding: '20px', border: '1px solid #e6eefb' }}>
+            <h3 style={{ margin: '0 0 20px 0', fontSize: '18px', color: '#0f172a' }}>User Roles Distribution</h3>
+            <Pie
+              data={{
+                labels: Object.keys(stats.role_distribution),
+                datasets: [{
+                  data: Object.values(stats.role_distribution),
+                  backgroundColor: ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6'],
+                  borderWidth: 1
+                }]
+              }}
+              options={{
+                responsive: true,
+                plugins: {
+                  legend: { position: 'bottom' }
+                }
+              }}
+            />
+          </div>
+
+          {/* Department Performance Bar Chart */}
+          <div style={{ flex: 1, minWidth: '300px', background: '#fff', borderRadius: '10px', padding: '20px', border: '1px solid #e6eefb' }}>
+            <h3 style={{ margin: '0 0 20px 0', fontSize: '18px', color: '#0f172a' }}>Department Performance</h3>
+            <Bar
+              data={{
+                labels: stats.department_stats.map(dept => dept.name),
+                datasets: [{
+                  label: 'Tickets Handled',
+                  data: stats.department_stats.map(dept => dept.tickets),
+                  backgroundColor: '#3b82f6',
+                  borderWidth: 1
+                }]
+              }}
+              options={{
+                responsive: true,
+                scales: {
+                  y: { beginAtZero: true }
+                }
+              }}
+            />
+          </div>
+        </div>
+
+        {/* Performance Metrics and Top Performers */}
+        <div style={{ display: 'flex', gap: '30px', marginBottom: '30px', flexWrap: 'wrap' }}>
+          {/* Performance Metrics */}
+          <div style={{ flex: 1, minWidth: '300px', background: '#fff', borderRadius: '10px', padding: '20px', border: '1px solid #e6eefb' }}>
+            <h3 style={{ margin: '0 0 20px 0', fontSize: '18px', color: '#0f172a' }}>Performance Metrics</h3>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <span style={{ fontSize: '14px', color: '#6b7280' }}>Avg Resolution Time</span>
+                <span style={{ fontSize: '16px', fontWeight: 600, color: '#0f172a' }}>{stats.performance_metrics.avg_resolution_time_hours || 0}h</span>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <span style={{ fontSize: '14px', color: '#6b7280' }}>Completion Rate</span>
+                <span style={{ fontSize: '16px', fontWeight: 600, color: '#0f172a' }}>{stats.performance_metrics.completion_rate_percent || 0}%</span>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <span style={{ fontSize: '14px', color: '#6b7280' }}>Weekly Tickets Quota</span>
+                <span style={{ fontSize: '16px', fontWeight: 600, color: '#0f172a' }}>{stats.weekly_quotas.tickets_resolved || '0/50'}</span>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <span style={{ fontSize: '14px', color: '#6b7280' }}>Weekly Work Orders Quota</span>
+                <span style={{ fontSize: '16px', fontWeight: 600, color: '#0f172a' }}>{stats.weekly_quotas.work_orders_completed || '0/35'}</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Top Performers */}
+          <div style={{ flex: 1, minWidth: '300px', background: '#fff', borderRadius: '10px', padding: '20px', border: '1px solid #e6eefb' }}>
+            <h3 style={{ margin: '0 0 20px 0', fontSize: '18px', color: '#0f172a' }}>Top Performers</h3>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+              {stats.top_performers.map((performer, index) => (
+                <div key={index} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px', background: '#f8fafc', borderRadius: '5px' }}>
+                  <span style={{ fontSize: '14px', color: '#0f172a' }}>{performer.name}</span>
+                  <span style={{ fontSize: '14px', fontWeight: 600, color: '#3b82f6' }}>{performer.resolved_tickets} tickets</span>
+                </div>
+              ))}
+              {stats.top_performers.length === 0 && (
+                <div style={{ textAlign: 'center', color: '#6b7280', padding: '20px' }}>No performance data available</div>
+              )}
             </div>
           </div>
         </div>
