@@ -1,0 +1,445 @@
+/* Nursing Department Dashboard - White with Blue Accents (matching SVG structure) */
+:root {
+  --nursing-primary: #8E44AD;
+  --nursing-primary-light: #9B59B6;
+  --nursing-primary-dark: #7D3C98;
+  --nursing-accent: #D7BDE2;
+  --nursing-accent-light: #EAD1F7;
+  --nursing-background: #F4ECF7;
+  --nursing-surface: #FFFFFF;
+  --nursing-text: #333333;
+  --nursing-text-light: #666666;
+  --nursing-border: #D7BDE2;
+  --nursing-shadow: 0 2px 8px rgba(142, 68, 173, 0.1);
+  --nursing-shadow-hover: 0 4px 12px rgba(142, 68, 173, 0.15);
+}
+
+/* Nursing Dashboard Layout */
+.nursing-dashboard {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: white;
+}
+
+.nursing-content {
+  display: flex;
+  flex: 1;
+  min-height: calc(100vh - 60px);
+}
+
+/* Nursing Sidebar - Purple background like SVG */
+.nursing-sidebar {
+  width: 250px;
+  background: var(--nursing-primary);
+  display: flex;
+  flex-direction: column;
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
+}
+
+.nursing-sidebar-header {
+  padding: 30px 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.nursing-sidebar-header h1 {
+  font-size: 20px;
+  font-weight: bold;
+  color: white;
+  text-align: left;
+  margin: 0;
+}
+
+.nursing-sidebar-nav {
+  flex: 1;
+  padding: 20px 0;
+  overflow-y: auto;
+}
+
+.nursing-sidebar-nav ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.nursing-sidebar-nav li {
+  margin: 0;
+}
+
+.nursing-sidebar-nav button {
+  width: 100%;
+  padding: 12px 30px;
+  background: none;
+  border: none;
+  text-align: left;
+  font-size: 16px;
+  font-weight: normal;
+  color: white;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.nursing-sidebar-nav button:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.nursing-sidebar-nav button.active {
+  background: rgba(255, 255, 255, 0.15);
+  font-weight: 500;
+}
+
+/* Dropdown Menu */
+.nursing-dropdown-toggle {
+  position: relative;
+}
+
+.nursing-dropdown-arrow {
+  margin-left: auto;
+  font-size: 12px;
+  transition: transform 0.2s ease;
+}
+
+.nursing-dropdown-arrow.expanded {
+  transform: rotate(180deg);
+}
+
+.nursing-dropdown-menu {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  background: rgba(0, 0, 0, 0.1);
+}
+
+.nursing-dropdown-menu li {
+  margin: 0;
+}
+
+.nursing-dropdown-menu button {
+  padding: 10px 30px 10px 50px;
+  font-size: 14px;
+  color: var(--nursing-accent-light);
+}
+
+.nursing-dropdown-menu button:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+/* Nursing Header - Light purple background like SVG */
+.nursing-header {
+  height: 60px;
+  background: var(--nursing-background);
+  border-bottom: 1px solid var(--nursing-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.nursing-header-title {
+  font-size: 18px;
+  font-weight: bold;
+  color: var(--nursing-primary);
+  margin: 0;
+}
+
+.nursing-header-user {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: var(--nursing-primary);
+  cursor: pointer;
+}
+
+/* Nursing Main Content - White background */
+.nursing-main {
+  flex: 1;
+  padding: 20px;
+  background: white;
+  overflow-y: auto;
+}
+
+/* Overview Cards - White cards with purple borders */
+.nursing-overview-cards {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.nursing-card {
+  background: white;
+  border: 1px solid var(--nursing-border);
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: var(--nursing-shadow);
+  transition: all 0.2s ease;
+}
+
+.nursing-card:hover {
+  box-shadow: var(--nursing-shadow-hover);
+  transform: translateY(-2px);
+}
+
+.nursing-card-title {
+  font-size: 14px;
+  font-weight: bold;
+  color: var(--nursing-primary);
+  margin: 0 0 10px 0;
+}
+
+.nursing-card-value {
+  font-size: 24px;
+  font-weight: bold;
+  color: var(--nursing-text);
+  margin: 0;
+}
+
+.nursing-card-value.critical {
+  color: #E74C3C;
+}
+
+/* Panel Sections - White panels with purple borders */
+.nursing-panel {
+  background: white;
+  border: 1px solid var(--nursing-border);
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: var(--nursing-shadow);
+}
+
+.nursing-panel-title {
+  font-size: 16px;
+  font-weight: bold;
+  color: var(--nursing-primary);
+  margin: 0 0 15px 0;
+}
+
+.nursing-panel-content {
+  font-size: 14px;
+  color: var(--nursing-text);
+  line-height: 1.8;
+}
+
+.nursing-panel-item {
+  padding: 8px 0;
+  border-bottom: 1px solid var(--nursing-accent-light);
+}
+
+.nursing-panel-item:last-child {
+  border-bottom: none;
+}
+
+/* Footer - Light purple background like SVG */
+.nursing-footer {
+  height: 60px;
+  background: var(--nursing-background);
+  border-top: 1px solid var(--nursing-border);
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  font-size: 14px;
+  color: var(--nursing-primary);
+}
+
+/* Buttons */
+.nursing-btn {
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.nursing-btn-primary {
+  background: var(--nursing-primary);
+  color: white;
+}
+
+.nursing-btn-primary:hover {
+  background: var(--nursing-primary-dark);
+  transform: translateY(-1px);
+  box-shadow: var(--nursing-shadow-hover);
+}
+
+.nursing-btn-outline {
+  background: transparent;
+  color: var(--nursing-primary);
+  border: 1px solid var(--nursing-primary);
+}
+
+.nursing-btn-outline:hover {
+  background: var(--nursing-background);
+}
+
+/* Status Badges */
+.nursing-status-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.nursing-status-open {
+  background: rgba(46, 204, 113, 0.1);
+  color: #27ae60;
+}
+
+.nursing-status-in-progress {
+  background: rgba(241, 196, 15, 0.1);
+  color: #f39c12;
+}
+
+.nursing-status-closed {
+  background: rgba(149, 165, 166, 0.1);
+  color: #7f8c8d;
+}
+
+.nursing-priority-low {
+  background: rgba(52, 152, 219, 0.1);
+  color: #2980b9;
+}
+
+.nursing-priority-medium {
+  background: rgba(241, 196, 15, 0.1);
+  color: #f39c12;
+}
+
+.nursing-priority-high {
+  background: rgba(230, 126, 34, 0.1);
+  color: #d35400;
+}
+
+.nursing-priority-critical {
+  background: rgba(231, 76, 60, 0.1);
+  color: #c0392b;
+}
+
+/* Form Elements */
+.nursing-form-label {
+  display: block;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--nursing-text);
+  margin-bottom: 6px;
+}
+
+.nursing-form-control {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--nursing-border);
+  border-radius: 8px;
+  font-size: 14px;
+  background: white;
+  color: var(--nursing-text);
+  transition: all 0.2s ease;
+}
+
+.nursing-form-control:focus {
+  outline: none;
+  border-color: var(--nursing-primary);
+  box-shadow: 0 0 0 3px rgba(142, 68, 173, 0.1);
+}
+
+/* Modal */
+.nursing-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.nursing-modal-content {
+  background: white;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 600px;
+  max-height: 80vh;
+  overflow: hidden;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+}
+
+.nursing-modal-header {
+  padding: 20px;
+  border-bottom: 1px solid var(--nursing-border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--nursing-background);
+}
+
+.nursing-modal-header h4 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: bold;
+  color: var(--nursing-primary);
+}
+
+.nursing-modal-close {
+  background: none;
+  border: none;
+  font-size: 28px;
+  color: var(--nursing-text-light);
+  cursor: pointer;
+  line-height: 1;
+  padding: 0;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.nursing-modal-close:hover {
+  color: var(--nursing-primary);
+}
+
+.nursing-modal-body {
+  padding: 20px;
+  overflow-y: auto;
+  max-height: calc(80vh - 80px);
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .nursing-overview-cards {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .nursing-content {
+    flex-direction: column;
+  }
+
+  .nursing-sidebar {
+    width: 100%;
+    height: auto;
+  }
+
+  .nursing-overview-cards {
+    grid-template-columns: 1fr;
+  }
+
+  .nursing-main {
+    padding: 15px;
+  }
+}
