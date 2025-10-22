@@ -4,14 +4,19 @@ import { api } from '../services/api';
 import { auth } from '../services/auth';
 import TicketCard from '../components/TicketCard';
 import TicketDetails from '../components/TicketDetails';
+import TicketTemplateSelector from '../components/TicketTemplateSelector';
+import WorkflowBuilder from '../components/WorkflowBuilder';
 
 export default function AdminTickets() {
-  const navigate = useNavigate();
-  const [tickets, setTickets] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
-  const [selectedTicketId, setSelectedTicketId] = useState(null);
-  const [filter, setFilter] = useState('all'); // all, pending, assigned, resolved
+   const navigate = useNavigate();
+   const [tickets, setTickets] = useState([]);
+   const [loading, setLoading] = useState(true);
+   const [error, setError] = useState('');
+   const [selectedTicketId, setSelectedTicketId] = useState(null);
+   const [filter, setFilter] = useState('all'); // all, pending, assigned, resolved
+   const [showTemplateSelector, setShowTemplateSelector] = useState(false);
+   const [showWorkflowBuilder, setShowWorkflowBuilder] = useState(false);
+   const [selectedWorkflowId, setSelectedWorkflowId] = useState(null);
 
   const handleLogout = async () => {
     try {
@@ -197,23 +202,52 @@ export default function AdminTickets() {
       {/* Main Content */}
       <div style={{ marginLeft: '230px', maxWidth: '870px' }}>
         {/* Header */}
-        <div
-          style={{
-            width: '100%',
-            height: '64px',
-            borderRadius: '10px',
-            background: '#ffffff',
-            border: '1px solid #e6eefb',
-            display: 'flex',
-            alignItems: 'center',
-            padding: '0 24px',
-            marginBottom: '30px'
-          }}
-        >
-          <h1 style={{ fontSize: '22px', color: '#0f172a', fontWeight: 700, margin: 0 }}>
-            Tickets Management
-          </h1>
-        </div>
+         <div
+           style={{
+             width: '100%',
+             height: '64px',
+             borderRadius: '10px',
+             background: '#ffffff',
+             border: '1px solid #e6eefb',
+             display: 'flex',
+             alignItems: 'center',
+             justifyContent: 'space-between',
+             padding: '0 24px',
+             marginBottom: '30px'
+           }}
+         >
+           <h1 style={{ fontSize: '22px', color: '#0f172a', fontWeight: 700, margin: 0 }}>
+             Tickets Management
+           </h1>
+           <div style={{ display: 'flex', gap: '10px' }}>
+             <button
+               onClick={() => setShowTemplateSelector(true)}
+               style={{
+                 padding: '8px 16px',
+                 backgroundColor: '#28a745',
+                 color: 'white',
+                 border: 'none',
+                 borderRadius: '4px',
+                 cursor: 'pointer'
+               }}
+             >
+               📋 Create from Template
+             </button>
+             <button
+               onClick={() => setShowWorkflowBuilder(true)}
+               style={{
+                 padding: '8px 16px',
+                 backgroundColor: '#17a2b8',
+                 color: 'white',
+                 border: 'none',
+                 borderRadius: '4px',
+                 cursor: 'pointer'
+               }}
+             >
+               ⚙ Manage Workflows
+             </button>
+           </div>
+         </div>
 
         {/* Filter buttons */}
         <div style={{ display: 'flex', gap: '10px', marginBottom: '20px' }}>
@@ -295,15 +329,43 @@ export default function AdminTickets() {
         </div>
 
         {/* Ticket Details Modal */}
-        {selectedTicketId && (
-          <TicketDetails
-            ticketId={selectedTicketId}
-            onClose={() => {
-              setSelectedTicketId(null);
-              fetchTickets(); // Refresh data when modal closes
-            }}
-          />
-        )}
+         {selectedTicketId && (
+           <TicketDetails
+             ticketId={selectedTicketId}
+             onClose={() => {
+               setSelectedTicketId(null);
+               fetchTickets(); // Refresh data when modal closes
+             }}
+           />
+         )}
+
+         {/* Template Selector Modal */}
+         {showTemplateSelector && (
+           <TicketTemplateSelector
+             onTemplateSelect={async (ticketData) => {
+               try {
+                 await api.post('/workflow/templates/' + ticketData.template_id + '/use', ticketData);
+                 setShowTemplateSelector(false);
+                 fetchTickets(); // Refresh tickets list
+               } catch (error) {
+                 console.error('Error creating ticket from template:', error);
+                 alert('Failed to create ticket from template');
+               }
+             }}
+             onClose={() => setShowTemplateSelector(false)}
+           />
+         )}
+
+         {/* Workflow Builder Modal */}
+         {showWorkflowBuilder && (
+           <WorkflowBuilder
+             workflowId={selectedWorkflowId}
+             onClose={() => {
+               setShowWorkflowBuilder(false);
+               setSelectedWorkflowId(null);
+             }}
+           />
+         )}
       </div>
     </div>
   );

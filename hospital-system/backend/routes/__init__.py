@@ -7,6 +7,9 @@ from .equipment_routes import equipment_bp
 from .ticket_routes import ticket_bp
 from .patient_routes import patient_bp
 from .notification_routes import notification_bp
+from .appointment_routes import appointment_bp
+from .medical_records_routes import medical_records_bp
+from .workflow_routes import workflow_bp
 
 def register_blueprints(app):
     app.register_blueprint(auth_bp, url_prefix='/auth')
@@ -18,3 +21,6 @@ def register_blueprints(app):
     app.register_blueprint(ticket_bp, url_prefix='/ticket')
     app.register_blueprint(patient_bp, url_prefix='/patient')
     app.register_blueprint(notification_bp, url_prefix='/notification')
+    app.register_blueprint(appointment_bp, url_prefix='/appointment')
+    app.register_blueprint(medical_records_bp, url_prefix='/medical-records')
+    app.register_blueprint(workflow_bp, url_prefix='/workflow')
