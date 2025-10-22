@@ -37,6 +37,22 @@ const Sidebar = ({ role, activeItem, onItemClick }) => {
       { icon: '🏠', label: 'Dashboard', id: 'dashboard' },
       { icon: '🎫', label: 'My Tasks', id: 'tasks' },
       { icon: '📝', label: 'Update Status', id: 'update-status' }
+    ],
+    electrician: [
+      { icon: '🏠', label: 'Dashboard', id: 'dashboard' },
+      { icon: '🔧', label: 'Work Orders', id: 'work-orders' },
+      { icon: '🛠️', label: 'Preventive Maintenance', id: 'preventive-maintenance' },
+      { icon: '⚡', label: 'Generators', id: 'generators' },
+      { icon: '🔋', label: 'UPS & Power', id: 'ups-power' },
+      { icon: '📦', label: 'Assets', id: 'assets' },
+      { icon: '📊', label: 'Reports', id: 'reports' },
+      { icon: '⚙️', label: 'Settings', id: 'settings' }
+    ],
+    maintenance_manager: [
+      { icon: '🏠', label: 'Dashboard', id: 'dashboard' },
+      { icon: '🎫', label: 'All Work Orders', id: 'work-orders' },
+      { icon: '👷', label: 'Technicians', id: 'technicians' },
+      { icon: '📊', label: 'Reports', id: 'reports' }
     ]
   };
 
