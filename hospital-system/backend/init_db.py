@@ -2,7 +2,8 @@
 Database initialization script with sample data for Maintenance Department System
 """
 from app import app, db
-from models import User, Department, WorkOrder, Technician, Equipment, Patient, Ticket
+from models import User, Department, WorkOrder, Technician, Equipment, Patient, Ticket, TicketTemplate, Workflow, WorkflowStep
+import json
 from werkzeug.security import generate_password_hash
 from datetime import datetime, timedelta
 
@@ -20,11 +21,11 @@ def init_database():
         db.session.add(admin)
 
         # Create requester users (hospital staff)
-        requester1 = User(username='nurse@hospital.com', role='requester')
+        requester1 = User(username='nurse@hospital.com', role='department')
         requester1.set_password('staff123')
         db.session.add(requester1)
 
-        requester2 = User(username='doctor@hospital.com', role='requester')
+        requester2 = User(username='doctor@hospital.com', role='department')
         requester2.set_password('staff123')
         db.session.add(requester2)
 
@@ -136,13 +137,13 @@ def init_database():
         print("Creating departments...")
 
         # Create hospital departments
-        cardiology_dept = Department(name='Cardiology', user_id=admin.id)
+        cardiology_dept = Department(name='Cardiology', user_id=requester2.id)  # doctor
         db.session.add(cardiology_dept)
 
-        radiology_dept = Department(name='Radiology', user_id=admin.id)
+        radiology_dept = Department(name='Radiology', user_id=requester2.id)  # doctor
         db.session.add(radiology_dept)
 
-        emergency_dept = Department(name='Emergency', user_id=admin.id)
+        emergency_dept = Department(name='Emergency', user_id=requester1.id)  # nurse
         db.session.add(emergency_dept)
 
         db.session.commit()
@@ -154,9 +155,26 @@ def init_database():
             name='John Smith',
             user_id=patient1.id,
             date_of_birth=datetime(1985, 3, 15),
+            age=39,
+            gender='Male',
             phone='+1234567890',
-            address='123 Main St, City, State',
-            medical_record_number='MRN001'
+            email='john.smith@email.com',
+            address='123 Main St',
+            city='Nairobi',
+            state='Nairobi County',
+            zip_code='00100',
+            medical_record_number='MRN001',
+            emergency_contact_name='Mary Smith',
+            emergency_contact_phone='+1234567899',
+            emergency_contact_relationship='Wife',
+            blood_type='O+',
+            allergies='Penicillin',
+            chronic_conditions='Hypertension',
+            current_medications='Lisinopril 10mg daily',
+            condition='Hypertension management',
+            insurance_provider='AAR Insurance',
+            insurance_policy_number='POL001234',
+            insurance_group_number='GRP001'
         )
         db.session.add(patient_profile1)
 
@@ -164,9 +182,26 @@ def init_database():
             name='Jane Doe',
             user_id=patient2.id,
             date_of_birth=datetime(1990, 7, 22),
+            age=35,
+            gender='Female',
             phone='+1234567891',
-            address='456 Oak Ave, City, State',
-            medical_record_number='MRN002'
+            email='jane.doe@email.com',
+            address='456 Oak Ave',
+            city='Nairobi',
+            state='Nairobi County',
+            zip_code='00200',
+            medical_record_number='MRN002',
+            emergency_contact_name='Robert Doe',
+            emergency_contact_phone='+1234567888',
+            emergency_contact_relationship='Husband',
+            blood_type='A+',
+            allergies='None',
+            chronic_conditions='None',
+            current_medications='None',
+            condition='Routine checkup',
+            insurance_provider='Jubilee Insurance',
+            insurance_policy_number='POL005678',
+            insurance_group_number='GRP002'
         )
         db.session.add(patient_profile2)
 
@@ -288,6 +323,222 @@ def init_database():
             work_order = WorkOrder(**work_order_data)
             db.session.add(work_order)
 
+        # Create sample workflows and templates
+        print("Creating sample workflows and templates...")
+
+        # Create Emergency Response Workflow
+        emergency_workflow = Workflow(
+            name="Emergency Response Workflow",
+            description="Automated workflow for critical medical emergencies",
+            category="ticket",
+            created_by=admin.id
+        )
+        db.session.add(emergency_workflow)
+        db.session.commit()
+
+        # Emergency workflow steps
+        trigger_step = WorkflowStep(
+            workflow_id=emergency_workflow.id,
+            step_order=1,
+            name="Emergency Ticket Created",
+            description="Trigger when critical priority ticket is created",
+            step_type="trigger",
+            config=json.dumps({
+                "trigger_type": "ticket_created",
+                "conditions": [
+                    {"type": "priority_match", "value": "critical"}
+                ]
+            })
+        )
+        db.session.add(trigger_step)
+
+        condition_step = WorkflowStep(
+            workflow_id=emergency_workflow.id,
+            step_order=2,
+            name="Check Emergency Department",
+            description="Check if ticket is from emergency department",
+            step_type="condition",
+            config=json.dumps({
+                "condition_type": "department_check",
+                "department_id": emergency_dept.id
+            }),
+            next_step_id=None  # Will be set after creating action step
+        )
+        db.session.add(condition_step)
+
+        action_step = WorkflowStep(
+            workflow_id=emergency_workflow.id,
+            step_order=3,
+            name="Auto Assign to Emergency Team",
+            description="Automatically assign to available emergency technician",
+            step_type="action",
+            config=json.dumps({
+                "action_type": "assign_ticket",
+                "assignment_rule": "auto"
+            })
+        )
+        db.session.add(action_step)
+
+        # Update condition to point to action
+        condition_step.next_step_id = action_step.id
+        db.session.commit()
+
+        # Create Routine Maintenance Workflow
+        maintenance_workflow = Workflow(
+            name="Routine Maintenance Workflow",
+            description="Standard workflow for facility maintenance requests",
+            category="ticket",
+            created_by=admin.id
+        )
+        db.session.add(maintenance_workflow)
+        db.session.commit()
+
+        # Maintenance workflow steps
+        maint_trigger = WorkflowStep(
+            workflow_id=maintenance_workflow.id,
+            step_order=1,
+            name="Maintenance Request Created",
+            description="Trigger when low/medium priority maintenance ticket is created",
+            step_type="trigger",
+            config=json.dumps({
+                "trigger_type": "ticket_created",
+                "conditions": [
+                    {"type": "category_match", "value": "facilities"},
+                    {"type": "priority_match", "value": "low"}
+                ]
+            })
+        )
+        db.session.add(maint_trigger)
+
+        maint_condition = WorkflowStep(
+            workflow_id=maintenance_workflow.id,
+            step_order=2,
+            name="Check Time Elapsed",
+            description="Wait 2 hours before auto-assigning",
+            step_type="condition",
+            config=json.dumps({
+                "condition_type": "time_elapsed",
+                "hours": 2
+            })
+        )
+        db.session.add(maint_condition)
+
+        maint_action = WorkflowStep(
+            workflow_id=maintenance_workflow.id,
+            step_order=3,
+            name="Assign to Maintenance Team",
+            description="Assign to available maintenance technician",
+            step_type="action",
+            config=json.dumps({
+                "action_type": "assign_ticket",
+                "assignment_rule": "auto"
+            })
+        )
+        db.session.add(maint_action)
+
+        # Update condition to point to action
+        maint_condition.next_step_id = maint_action.id
+        db.session.commit()
+
+        # Create Emergency Response Template
+        emergency_template = TicketTemplate(
+            name="Emergency Response",
+            description="Critical medical emergency requiring immediate attention",
+            category="medical",
+            priority="critical",
+            department_id=emergency_dept.id,
+            custom_fields=json.dumps({
+                "location": {
+                    "type": "text",
+                    "label": "Location",
+                    "placeholder": "Room/building where emergency occurred",
+                    "required": True
+                },
+                "patient_condition": {
+                    "type": "textarea",
+                    "label": "Patient Condition",
+                    "placeholder": "Describe the patient's current condition",
+                    "required": True
+                },
+                "equipment_needed": {
+                    "type": "text",
+                    "label": "Equipment Needed",
+                    "placeholder": "Medical equipment required",
+                    "required": False
+                },
+                "urgency_level": {
+                    "type": "select",
+                    "label": "Urgency Level",
+                    "options": [
+                        {"value": "immediate", "label": "Immediate - Life Threatening"},
+                        {"value": "urgent", "label": "Urgent - Requires Quick Response"},
+                        {"value": "critical", "label": "Critical - Needs Attention Soon"}
+                    ],
+                    "required": True
+                }
+            }),
+            workflow_id=emergency_workflow.id,
+            created_by=admin.id
+        )
+        db.session.add(emergency_template)
+
+        # Create Facility Maintenance Template
+        maintenance_template = TicketTemplate(
+            name="Facility Maintenance Request",
+            description="Report facility issues like plumbing, electrical, or general repairs",
+            category="facilities",
+            priority="low",
+            department_id=maintenance_dept.id,
+            custom_fields=json.dumps({
+                "location": {
+                    "type": "text",
+                    "label": "Location",
+                    "placeholder": "Specific room or area needing maintenance",
+                    "required": True
+                },
+                "issue_type": {
+                    "type": "select",
+                    "label": "Type of Issue",
+                    "options": [
+                        {"value": "plumbing", "label": "Plumbing"},
+                        {"value": "electrical", "label": "Electrical"},
+                        {"value": "hvac", "label": "HVAC/Heating"},
+                        {"value": "structural", "label": "Structural"},
+                        {"value": "cleaning", "label": "Cleaning"},
+                        {"value": "other", "label": "Other"}
+                    ],
+                    "required": True
+                },
+                "description": {
+                    "type": "textarea",
+                    "label": "Detailed Description",
+                    "placeholder": "Describe the issue in detail",
+                    "required": True
+                },
+                "urgency": {
+                    "type": "select",
+                    "label": "Urgency",
+                    "options": [
+                        {"value": "low", "label": "Low - Can wait"},
+                        {"value": "medium", "label": "Medium - Needs attention soon"},
+                        {"value": "high", "label": "High - Urgent repair needed"}
+                    ],
+                    "required": True
+                },
+                "safety_concern": {
+                    "type": "select",
+                    "label": "Safety Concern",
+                    "options": [
+                        {"value": "yes", "label": "Yes - Poses safety risk"},
+                        {"value": "no", "label": "No - Not a safety issue"}
+                    ],
+                    "required": True
+                }
+            }),
+            workflow_id=maintenance_workflow.id,
+            created_by=admin.id
+        )
+        db.session.add(maintenance_template)
         db.session.commit()
 
         print("\n✅ Maintenance Database initialized successfully!")
