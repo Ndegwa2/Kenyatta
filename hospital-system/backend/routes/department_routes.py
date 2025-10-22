@@ -219,13 +219,86 @@ def get_ticket_templates():
 
     return jsonify(templates), 200
 
+@department_bp.route('/ticket/<int:ticket_id>/comment', methods=['POST'])
+@login_required
+def add_ticket_comment(ticket_id):
+    """Allow nurses to add follow-up comments to their tickets"""
+    ticket = Ticket.query.get(ticket_id)
+    if not ticket:
+        return jsonify({'message': 'Ticket not found'}), 404
+
+    # Get department for current user
+    department = Department.query.filter_by(user_id=current_user.id).first()
+    if not department or ticket.department_id != department.id:
+        return jsonify({'message': 'Unauthorized: Can only comment on own department tickets'}), 403
+
+    data = request.get_json()
+    comment = data.get('comment', '').strip()
+    if not comment:
+        return jsonify({'message': 'Comment cannot be empty'}), 400
+
+    # Create comment (using existing TicketComment model)
+    from models import TicketComment
+    ticket_comment = TicketComment(
+        ticket_id=ticket_id,
+        user_id=current_user.id,
+        comment=comment
+    )
+
+    db = get_db()
+    db.session.add(ticket_comment)
+    db.session.commit()
+
+    return jsonify({
+        'message': 'Comment added successfully',
+        'comment': {
+            'id': ticket_comment.id,
+            'comment': ticket_comment.comment,
+            'user': current_user.username,
+            'created_at': ticket_comment.created_at.isoformat() if ticket_comment.created_at else None
+        }
+    }), 201
+
+@department_bp.route('/ticket/<int:ticket_id>/comments', methods=['GET'])
+@login_required
+def get_ticket_comments(ticket_id):
+    """Get comments for a specific ticket"""
+    ticket = Ticket.query.get(ticket_id)
+    if not ticket:
+        return jsonify({'message': 'Ticket not found'}), 404
+
+    # Get department for current user
+    department = Department.query.filter_by(user_id=current_user.id).first()
+    if not department or ticket.department_id != department.id:
+        return jsonify({'message': 'Unauthorized'}), 403
+
+    from models import TicketComment
+    comments = TicketComment.query.filter_by(ticket_id=ticket_id).order_by(TicketComment.created_at.desc()).all()
+
+    comments_data = [{
+        'id': c.id,
+        'comment': c.comment,
+        'user': User.query.get(c.user_id).username if User.query.get(c.user_id) else 'Unknown',
+        'created_at': c.created_at.isoformat() if c.created_at else None
+    } for c in comments]
+
+    return jsonify(comments_data), 200
+
+# Keep the status update route for maintenance staff (technicians)
 @department_bp.route('/ticket/<int:ticket_id>/status', methods=['PUT'])
 @login_required
 def update_ticket_status(ticket_id):
+    # Only allow technicians and admins to update status
+    if current_user.role not in ['technician', 'admin', 'manager']:
+        return jsonify({'message': 'Unauthorized: Only maintenance staff can update ticket status'}), 403
+
     data = request.get_json()
     ticket = Ticket.query.get(ticket_id)
     if ticket:
         ticket.status = data['status']
+        if data['status'] == 'closed':
+            from datetime import datetime
+            ticket.resolved_at = datetime.utcnow()
         db = get_db()
         db.session.commit()
         return jsonify({'message': 'Ticket status updated'}), 200
