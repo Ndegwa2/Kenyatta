@@ -1,0 +1,416 @@
+/* Patient Dashboard Tab Styles */
+.tab-navigation {
+  display: flex;
+  background: white;
+  border-radius: 8px;
+  padding: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+}
+
+.tab-button {
+  flex: 1;
+  padding: 12px 20px;
+  border: none;
+  background: transparent;
+  color: #6c757d;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: all 0.2s;
+  position: relative;
+}
+
+.tab-button:hover {
+  background-color: #f8f9fa;
+  color: #495057;
+}
+
+.tab-button.active {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+}
+
+.tab-button.active:hover {
+  background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
+}
+
+/* Responsive tabs */
+@media (max-width: 768px) {
+  .tab-navigation {
+    flex-direction: column;
+  }
+
+  .tab-button {
+    text-align: center;
+  }
+}
+
+/* Tab content spacing */
+.tab-content {
+  margin-top: 20px;
+}
+
+/* Override default margins for components in tabs */
+.tab-content .patient-profile,
+.tab-content .appointment-scheduler,
+.tab-content .appointment-list {
+  margin-bottom: 20px;
+}
+
+/* Tickets Section Styles */
+.tickets-section {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.tickets-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 2rem;
+  padding: 1.5rem;
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  border-radius: 12px;
+  border: 1px solid var(--hospital-border);
+}
+
+.tickets-header__left {
+  flex: 1;
+}
+
+.tickets-title {
+  margin: 0 0 1rem 0;
+  color: var(--hospital-text-primary);
+  font-size: 2rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.tickets-stats {
+  display: flex;
+  gap: 2rem;
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.stat-number {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--hospital-primary);
+  line-height: 1;
+}
+
+.stat-label {
+  font-size: 0.875rem;
+  color: var(--hospital-text-secondary);
+  font-weight: 500;
+  margin-top: 0.25rem;
+}
+
+.btn-create-ticket {
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+  transition: all 0.2s ease;
+}
+
+.btn-create-ticket:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
+}
+
+/* Tickets Controls */
+.tickets-controls {
+  display: flex;
+  gap: 2rem;
+  margin-bottom: 2rem;
+  align-items: center;
+}
+
+.search-container {
+  position: relative;
+  flex: 1;
+  max-width: 400px;
+}
+
+.search-input {
+  width: 100%;
+  padding: 0.75rem 1rem 0.75rem 3rem;
+  border: 2px solid var(--hospital-border);
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: all 0.2s ease;
+  background: white;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: var(--hospital-primary);
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.search-icon {
+  position: absolute;
+  left: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--hospital-text-secondary);
+  font-size: 1.25rem;
+}
+
+.filter-buttons {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.filter-btn {
+  padding: 0.5rem 1rem;
+  border: 2px solid var(--hospital-border);
+  background: white;
+  color: var(--hospital-text-secondary);
+  border-radius: 6px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.filter-btn:hover {
+  border-color: var(--hospital-primary);
+  color: var(--hospital-primary);
+}
+
+.filter-btn.active {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-color: var(--hospital-primary);
+  color: white;
+  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+}
+
+/* Tickets Grid */
+.tickets-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+/* Empty State */
+.empty-state {
+  text-align: center;
+  padding: 4rem 2rem;
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  border: 2px dashed var(--hospital-border);
+  border-radius: 12px;
+}
+
+.empty-state__content {
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+.empty-state__icon {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+  opacity: 0.7;
+}
+
+.empty-state__title {
+  margin: 0 0 1rem 0;
+  color: var(--hospital-text-primary);
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.empty-state__message {
+  margin: 0 0 2rem 0;
+  color: var(--hospital-text-secondary);
+  line-height: 1.6;
+}
+
+/* Form Enhancements */
+.form-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.form-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--hospital-border);
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .tickets-grid {
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .tickets-header {
+    flex-direction: column;
+    gap: 1.5rem;
+    text-align: center;
+  }
+
+  .tickets-title {
+    font-size: 1.75rem;
+  }
+
+  .tickets-stats {
+    justify-content: center;
+  }
+
+  .btn-create-ticket {
+    width: 100%;
+    max-width: 300px;
+  }
+
+  .tickets-controls {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: stretch;
+  }
+
+  .search-container {
+    max-width: none;
+  }
+
+  .filter-buttons {
+    justify-content: center;
+  }
+
+  .tickets-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+
+  .form-actions {
+    flex-direction: column;
+  }
+
+  .form-actions .btn {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .tickets-stats {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .stat-item {
+    flex-direction: row;
+    justify-content: center;
+    gap: 0.5rem;
+  }
+
+  .tickets-header {
+    padding: 1rem;
+  }
+}
+
+/* Loading Skeletons */
+.skeleton {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: skeleton-loading 1.5s infinite;
+  border-radius: 4px;
+}
+
+.skeleton-title {
+  height: 2rem;
+  width: 250px;
+  margin-bottom: 1rem;
+}
+
+.skeleton-stat-number {
+  height: 2rem;
+  width: 2rem;
+}
+
+.skeleton-stat-label {
+  height: 0.875rem;
+  width: 3rem;
+  margin-top: 0.25rem;
+}
+
+.skeleton-button {
+  height: 3rem;
+  width: 150px;
+  border-radius: 8px;
+}
+
+.skeleton-search {
+  height: 3rem;
+  width: 100%;
+  max-width: 400px;
+  border-radius: 8px;
+}
+
+.skeleton-filter-btn {
+  height: 2rem;
+  width: 80px;
+  border-radius: 6px;
+  margin: 0 0.25rem;
+}
+
+.skeleton-card {
+  background: white;
+  border: 1px solid var(--hospital-border);
+  border-radius: 8px;
+  padding: 1.5rem;
+  box-shadow: var(--hospital-shadow-sm);
+}
+
+.skeleton-card-header {
+  height: 1.5rem;
+  width: 80%;
+  margin-bottom: 1rem;
+}
+
+.skeleton-card-content {
+  height: 3rem;
+  width: 100%;
+  margin-bottom: 1rem;
+}
+
+.skeleton-card-footer {
+  height: 1rem;
+  width: 60%;
+}
+
+@keyframes skeleton-loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
