@@ -1,0 +1,173 @@
+/* Enhanced Ticket Card Styles with Hospital Theme */
+.ticket-card--enhanced {
+  animation: cardFadeIn 0.3s ease-out;
+}
+
+.ticket-card__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 12px;
+}
+
+.ticket-card__title {
+  margin: 0;
+  color: var(--hospital-text-primary);
+  font-size: 18px;
+  font-weight: 600;
+  flex: 1;
+  margin-right: 12px;
+  line-height: 1.3;
+}
+
+.ticket-card__badges {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.status-badge {
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  color: white;
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
+  box-shadow: var(--hospital-shadow-sm);
+}
+
+.ticket-card__content {
+  margin-bottom: 16px;
+}
+
+.ticket-card__description {
+  color: var(--hospital-text-secondary);
+  margin: 0;
+  line-height: 1.5;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.ticket-card__footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.ticket-card__meta {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  flex: 1;
+}
+
+.meta-tag {
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  border: 1px solid var(--hospital-border);
+  background: var(--hospital-surface-secondary);
+  color: var(--hospital-text-secondary);
+}
+
+.meta-tag--category {
+  background: rgb(37 99 235 / 0.1);
+  border-color: rgb(37 99 235 / 0.2);
+  color: var(--hospital-primary);
+}
+
+.meta-tag--department {
+  background: rgb(16 185 129 / 0.1);
+  border-color: rgb(16 185 129 / 0.2);
+  color: var(--hospital-secondary);
+}
+
+.ticket-card__info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  align-items: flex-end;
+}
+
+.ticket-date {
+  font-size: 12px;
+  color: var(--hospital-text-muted);
+  font-weight: 500;
+}
+
+.assigned-info {
+  padding: 6px 10px;
+  background: rgb(245 158 11 / 0.1);
+  border-radius: 6px;
+  font-size: 12px;
+  color: var(--hospital-warning);
+  border: 1px solid rgb(245 158 11 / 0.2);
+  font-weight: 500;
+}
+
+/* Hover Effects */
+.ticket-card--enhanced:hover .ticket-card__title {
+  color: var(--hospital-primary);
+}
+
+.ticket-card--enhanced:hover .status-badge {
+  transform: scale(1.05);
+  transition: transform 0.2s ease;
+}
+
+/* Priority-based accent colors */
+.card--error .ticket-card__title {
+  color: var(--hospital-error);
+}
+
+.card--warning .ticket-card__title {
+  color: var(--hospital-warning);
+}
+
+.card--info .ticket-card__title {
+  color: var(--hospital-info);
+}
+
+.card--success .ticket-card__title {
+  color: var(--hospital-success);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .ticket-card__header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .ticket-card__title {
+    margin-right: 0;
+  }
+
+  .ticket-card__footer {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .ticket-card__info {
+    align-items: flex-start;
+  }
+}
+
+/* Animation keyframes */
+@keyframes cardFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

@@ -4,6 +4,9 @@ import Sidebar from '../components/Sidebar';
 import PatientProfile from '../components/PatientProfile';
 import AppointmentScheduler from '../components/AppointmentScheduler';
 import AppointmentList from '../components/AppointmentList';
+import TicketCard from '../components/TicketCard';
+import TicketDetails from '../components/TicketDetails';
+import MedicalRecords from '../components/MedicalRecords';
 import Card from '../components/Card';
 import { api } from '../services/api';
 import './PatientDashboard.css';
@@ -20,6 +23,8 @@ const PatientDashboard = () => {
     department_id: ''
   });
   const [activeTab, setActiveTab] = useState('profile');
+  const [selectedTicket, setSelectedTicket] = useState(null);
+  const [showTicketDetails, setShowTicketDetails] = useState(false);
 
   useEffect(() => {
     fetchData();
@@ -47,12 +52,23 @@ const PatientDashboard = () => {
     try {
       await api.post('/patient/ticket', newTicket);
       // Reset form and refresh data
-      setNewTicket({ title: '', description: '', department_id: '' });
+      setNewTicket({ title: '', description: '', department_id: '', priority: 'medium', category: 'general' });
       setShowCreateForm(false);
       fetchData();
     } catch (err) {
       setError('Failed to create ticket');
     }
+  };
+
+  const handleTicketClick = (ticket) => {
+    setSelectedTicket(ticket);
+    setShowTicketDetails(true);
+  };
+
+  const handleCloseTicketDetails = () => {
+    setShowTicketDetails(false);
+    setSelectedTicket(null);
+    fetchData(); // Refresh tickets after potential updates
   };
 
   if (loading) {
@@ -123,6 +139,12 @@ const PatientDashboard = () => {
             >
               Support Tickets
             </button>
+            <button
+              className={`tab-button ${activeTab === 'records' ? 'active' : ''}`}
+              onClick={() => setActiveTab('records')}
+            >
+              Medical Records
+            </button>
           </div>
 
           {/* Profile Tab */}
@@ -150,70 +172,107 @@ const PatientDashboard = () => {
           )}
 
           {/* Tickets Tab */}
-          {activeTab === 'tickets' && (
-            <div>
-              {showCreateForm && (
-                <Card className="mb-6">
-                  <div className="card__header">
-                    <h3 className="card__title">Create New Ticket</h3>
-                  </div>
-                  <form onSubmit={handleCreateTicket}>
-                    <div className="form-group">
-                      <label>Title</label>
-                      <input
-                        type="text"
-                        className="form-control"
-                        value={newTicket.title}
-                        onChange={(e) => setNewTicket({...newTicket, title: e.target.value})}
-                        required
-                      />
-                    </div>
-                    <div className="form-group">
-                      <label>Description</label>
-                      <textarea
-                        className="form-control"
-                        rows="3"
-                        value={newTicket.description}
-                        onChange={(e) => setNewTicket({...newTicket, description: e.target.value})}
-                        required
-                      ></textarea>
-                    </div>
-                    <div className="form-group">
-                      <label>Department ID</label>
-                      <input
-                        type="number"
-                        className="form-control"
-                        value={newTicket.department_id}
-                        onChange={(e) => setNewTicket({...newTicket, department_id: e.target.value})}
-                        required
-                      />
-                    </div>
-                    <button type="submit" className="btn btn-primary">Submit Ticket</button>
-                  </form>
-                </Card>
-              )}
+      {activeTab === 'tickets' && (
+        <div>
+          {showCreateForm && (
+            <Card className="mb-6">
+              <div className="card__header">
+                <h3 className="card__title">Create New Ticket</h3>
+              </div>
+              <form onSubmit={handleCreateTicket}>
+                <div className="form-group">
+                  <label>Title</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    value={newTicket.title}
+                    onChange={(e) => setNewTicket({...newTicket, title: e.target.value})}
+                    required
+                  />
+                </div>
+                <div className="form-group">
+                  <label>Description</label>
+                  <textarea
+                    className="form-control"
+                    rows="3"
+                    value={newTicket.description}
+                    onChange={(e) => setNewTicket({...newTicket, description: e.target.value})}
+                    required
+                  ></textarea>
+                </div>
+                <div className="form-group">
+                  <label>Department ID</label>
+                  <input
+                    type="number"
+                    className="form-control"
+                    value={newTicket.department_id}
+                    onChange={(e) => setNewTicket({...newTicket, department_id: e.target.value})}
+                    required
+                  />
+                </div>
+                <div className="form-group">
+                  <label>Priority</label>
+                  <select
+                    className="form-control"
+                    value={newTicket.priority}
+                    onChange={(e) => setNewTicket({...newTicket, priority: e.target.value})}
+                  >
+                    <option value="low">Low</option>
+                    <option value="medium">Medium</option>
+                    <option value="high">High</option>
+                    <option value="critical">Critical</option>
+                  </select>
+                </div>
+                <div className="form-group">
+                  <label>Category</label>
+                  <select
+                    className="form-control"
+                    value={newTicket.category}
+                    onChange={(e) => setNewTicket({...newTicket, category: e.target.value})}
+                  >
+                    <option value="general">General</option>
+                    <option value="medical">Medical</option>
+                    <option value="administrative">Administrative</option>
+                    <option value="maintenance">Maintenance</option>
+                  </select>
+                </div>
+                <button type="submit" className="btn btn-primary">Submit Ticket</button>
+              </form>
+            </Card>
+          )}
 
-              <h3 className="mb-4">My Tickets</h3>
-              {tickets.length === 0 ? (
-                <Card>
-                  <p className="text-center text-secondary">No tickets found.</p>
-                </Card>
-              ) : (
-                tickets.map(ticket => (
-                  <Card key={ticket.id} className="mb-4">
-                    <div className="card__header">
-                      <h4 className="card__title">{ticket.title}</h4>
-                    </div>
-                    <p className="mb-4">{ticket.description}</p>
-                    <div className="flex justify-between items-center">
-                      <span className={`status-badge status-${ticket.status}`}>{ticket.status}</span>
-                      <small className="text-muted">Ticket ID: {ticket.id}</small>
-                    </div>
-                  </Card>
-                ))
-              )}
+          <h3 className="mb-4">My Tickets</h3>
+          {tickets.length === 0 ? (
+            <Card>
+              <p className="text-center text-secondary">No tickets found.</p>
+            </Card>
+          ) : (
+            <div className="tickets-grid">
+              {tickets.map(ticket => (
+                <TicketCard
+                  key={ticket.id}
+                  ticket={ticket}
+                  onClick={() => handleTicketClick(ticket)}
+                />
+              ))}
             </div>
           )}
+
+          {/* Ticket Details Modal */}
+          {showTicketDetails && selectedTicket && (
+            <TicketDetails
+              ticket={selectedTicket}
+              onClose={handleCloseTicketDetails}
+              isPatientView={true}
+            />
+          )}
+        </div>
+      )}
+
+      {/* Medical Records Tab */}
+      {activeTab === 'records' && profile && (
+        <MedicalRecords patientId={profile.id} />
+      )}
         </main>
       </div>
     </div>

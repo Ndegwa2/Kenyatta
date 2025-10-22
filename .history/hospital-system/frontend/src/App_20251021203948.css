@@ -1,0 +1,370 @@
+/* Hospital Management System - Global Styles */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+/* CSS Custom Properties for Hospital Theme */
+:root {
+  --hospital-primary: #2563eb;
+  --hospital-primary-light: #3b82f6;
+  --hospital-primary-dark: #1d4ed8;
+  --hospital-secondary: #10b981;
+  --hospital-secondary-light: #34d399;
+  --hospital-accent: #f59e0b;
+  --hospital-accent-light: #fbbf24;
+  --hospital-success: #059669;
+  --hospital-warning: #d97706;
+  --hospital-error: #dc2626;
+  --hospital-info: #0891b2;
+  --hospital-background: #f8fafc;
+  --hospital-surface: #ffffff;
+  --hospital-surface-secondary: #f1f5f9;
+  --hospital-text-primary: #1e293b;
+  --hospital-text-secondary: #64748b;
+  --hospital-text-muted: #94a3b8;
+  --hospital-border: #e2e8f0;
+  --hospital-border-light: #f1f5f9;
+  --hospital-shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --hospital-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+  --hospital-shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --hospital-shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+  --hospital-radius-sm: 6px;
+  --hospital-radius: 8px;
+  --hospital-radius-lg: 12px;
+  --hospital-radius-xl: 16px;
+  --hospital-transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Reset and Base Styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: var(--hospital-background);
+  color: var(--hospital-text-primary);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Layout System - Reduced Whitespace */
+.dashboard {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.content {
+  display: flex;
+  flex: 1;
+  min-height: calc(100vh - 64px);
+}
+
+/* Sidebar - Compact and Professional */
+.sidebar {
+  width: 280px;
+  background: var(--hospital-surface);
+  border-right: 1px solid var(--hospital-border);
+  display: flex;
+  flex-direction: column;
+  box-shadow: var(--hospital-shadow-sm);
+}
+
+.sidebar-header {
+  padding: 24px 20px 16px;
+  border-bottom: 1px solid var(--hospital-border-light);
+}
+
+.sidebar-header h1 {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--hospital-primary);
+  text-align: center;
+}
+
+.sidebar-nav {
+  flex: 1;
+  padding: 16px 0;
+}
+
+.sidebar-nav ul {
+  list-style: none;
+}
+
+.sidebar-nav li {
+  margin: 4px 12px;
+}
+
+.sidebar-nav button {
+  width: 100%;
+  padding: 12px 16px;
+  background: none;
+  border: none;
+  border-radius: var(--hospital-radius);
+  text-align: left;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--hospital-text-secondary);
+  cursor: pointer;
+  transition: var(--hospital-transition);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.sidebar-nav button:hover {
+  background: var(--hospital-surface-secondary);
+  color: var(--hospital-text-primary);
+}
+
+.sidebar-nav button.active {
+  background: var(--hospital-primary);
+  color: white;
+}
+
+/* Main Content - Optimized Spacing */
+main {
+  flex: 1;
+  padding: 24px;
+  background: var(--hospital-background);
+  overflow-y: auto;
+}
+
+/* Header Section - Compact */
+.main-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--hospital-border-light);
+}
+
+.main-header h2 {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--hospital-text-primary);
+}
+
+/* Action Buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border-radius: var(--hospital-radius);
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: var(--hospital-transition);
+  white-space: nowrap;
+}
+
+.btn-primary {
+  background: var(--hospital-primary);
+  color: white;
+  border-color: var(--hospital-primary);
+}
+
+.btn-primary:hover {
+  background: var(--hospital-primary-dark);
+  border-color: var(--hospital-primary-dark);
+  transform: translateY(-1px);
+  box-shadow: var(--hospital-shadow);
+}
+
+.btn-secondary {
+  background: var(--hospital-surface);
+  color: var(--hospital-text-primary);
+  border-color: var(--hospital-border);
+}
+
+.btn-secondary:hover {
+  background: var(--hospital-surface-secondary);
+  border-color: var(--hospital-border);
+}
+
+.btn-success {
+  background: var(--hospital-success);
+  color: white;
+  border-color: var(--hospital-success);
+}
+
+.btn-warning {
+  background: var(--hospital-warning);
+  color: white;
+  border-color: var(--hospital-warning);
+}
+
+.btn-danger {
+  background: var(--hospital-error);
+  color: white;
+  border-color: var(--hospital-error);
+}
+
+/* Form Elements */
+.form-group {
+  margin-bottom: 16px;
+}
+
+.form-group label {
+  display: block;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--hospital-text-primary);
+  margin-bottom: 6px;
+}
+
+.form-control {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--hospital-border);
+  border-radius: var(--hospital-radius);
+  font-size: 14px;
+  background: var(--hospital-surface);
+  color: var(--hospital-text-primary);
+  transition: var(--hospital-transition);
+}
+
+.form-control:focus {
+  outline: none;
+  border-color: var(--hospital-primary);
+  box-shadow: 0 0 0 3px rgb(37 99 235 / 0.1);
+}
+
+/* Status Indicators */
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
+}
+
+.status-open {
+  background: rgb(34 197 94 / 0.1);
+  color: var(--hospital-success);
+}
+
+.status-in_progress {
+  background: rgb(245 158 11 / 0.1);
+  color: var(--hospital-warning);
+}
+
+.status-closed {
+  background: rgb(100 116 139 / 0.1);
+  color: var(--hospital-text-secondary);
+}
+
+/* Tab Navigation */
+.tab-navigation {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 20px;
+  border-bottom: 1px solid var(--hospital-border-light);
+}
+
+.tab-button {
+  padding: 10px 16px;
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--hospital-text-secondary);
+  cursor: pointer;
+  transition: var(--hospital-transition);
+}
+
+.tab-button:hover {
+  color: var(--hospital-text-primary);
+}
+
+.tab-button.active {
+  color: var(--hospital-primary);
+  border-bottom-color: var(--hospital-primary);
+}
+
+/* Grid Layouts */
+.grid {
+  display: grid;
+  gap: 16px;
+}
+
+.grid-cols-1 { grid-template-columns: repeat(1, minmax(0, 1fr)); }
+.grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.grid-cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.grid-cols-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+
+/* Flex Utilities */
+.flex { display: flex; }
+.flex-col { flex-direction: column; }
+.items-center { align-items: center; }
+.justify-between { justify-content: space-between; }
+.justify-center { justify-content: center; }
+.gap-2 { gap: 8px; }
+.gap-4 { gap: 16px; }
+
+/* Text Utilities */
+.text-sm { font-size: 14px; }
+.text-base { font-size: 16px; }
+.text-lg { font-size: 18px; }
+.text-xl { font-size: 20px; }
+.text-2xl { font-size: 24px; }
+
+.font-medium { font-weight: 500; }
+.font-semibold { font-weight: 600; }
+.font-bold { font-weight: 700; }
+
+.text-primary { color: var(--hospital-text-primary); }
+.text-secondary { color: var(--hospital-text-secondary); }
+.text-muted { color: var(--hospital-text-muted); }
+
+/* Spacing Utilities */
+.mb-2 { margin-bottom: 8px; }
+.mb-4 { margin-bottom: 16px; }
+.mb-6 { margin-bottom: 24px; }
+
+.mt-2 { margin-top: 8px; }
+.mt-4 { margin-top: 16px; }
+.mt-6 { margin-top: 24px; }
+
+.p-4 { padding: 16px; }
+.p-6 { padding: 24px; }
+
+/* Legacy Support - Keep existing classes for backward compatibility */
+.worker-card {
+  background: var(--hospital-surface);
+  border-radius: var(--hospital-radius-lg);
+  padding: 16px;
+  margin-bottom: 12px;
+  box-shadow: var(--hospital-shadow);
+  border-left: 4px solid var(--hospital-primary);
+  transition: var(--hospital-transition);
+}
+
+.worker-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--hospital-shadow-lg);
+}
+
+/* Scrollbar aesthetic */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--hospital-border);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--hospital-text-muted);
+}

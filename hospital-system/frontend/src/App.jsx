@@ -5,6 +5,10 @@ import Login from './pages/Login';
 import PatientDashboard from './pages/PatientDashboard';
 import DepartmentDashboard from './pages/DepartmentDashboard';
 import AdminDashboard from './pages/AdminDashboard';
+import AdminTickets from './pages/AdminTickets';
+import AdminCasuals from './pages/AdminCasuals';
+import AdminReports from './pages/AdminReports';
+import AdminSettings from './pages/AdminSettings';
 import CasualDashboard from './pages/CasualDashboard';
 
 function App() {
@@ -19,6 +23,10 @@ function App() {
           <Route path="/patient" element={<PatientDashboard />} />
           <Route path="/department" element={<DepartmentDashboard />} />
           <Route path="/admin" element={<AdminDashboard />} />
+          <Route path="/admin/tickets" element={<AdminTickets />} />
+          <Route path="/admin/casuals" element={<AdminCasuals />} />
+          <Route path="/admin/reports" element={<AdminReports />} />
+          <Route path="/admin/settings" element={<AdminSettings />} />
           <Route path="/casual" element={<CasualDashboard />} />
           <Route path="*" element={<Login />} />
         </Routes>

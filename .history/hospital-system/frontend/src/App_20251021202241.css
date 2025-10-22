@@ -1,0 +1,121 @@
+/* Reset default browser spacing */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Full-screen layout */
+body {
+  font-family: "Poppins", sans-serif;
+  background: linear-gradient(135deg, #e0e7ff, #f3f4f6);
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* Sidebar */
+.sidebar {
+  flex: 0 0 250px;
+  background: rgba(255, 255, 255, 0.35);
+  backdrop-filter: blur(15px);
+  box-shadow: 2px 0 15px rgba(0, 0, 0, 0.1);
+  border-right: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 2rem 1rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+.sidebar h1 {
+  font-size: 1.5rem;
+  color: #4f46e5;
+  margin-bottom: 2rem;
+  line-height: 1.2;
+  text-align: center;
+}
+
+.sidebar ul {
+  list-style: none;
+}
+
+.sidebar li {
+  margin: 1rem 0;
+  font-weight: 500;
+  cursor: pointer;
+  color: #444;
+  transition: 0.3s;
+}
+
+.sidebar li:hover {
+  color: #4f46e5;
+  transform: translateX(5px);
+}
+
+/* Main Content Section */
+.main-content {
+  flex: 1;
+  background: linear-gradient(135deg, #eef2ff, #e0e7ff);
+  padding: 2rem 3rem;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Header */
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+header h2 {
+  font-size: 1.8rem;
+  color: #111;
+}
+
+button.add-btn {
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  padding: 10px 18px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+button.add-btn:hover {
+  background: linear-gradient(135deg, #4f46e5, #7c3aed);
+  transform: scale(1.05);
+}
+
+/* Cards (for worker list) */
+.worker-card {
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 16px;
+  padding: 1.2rem;
+  margin-bottom: 1rem;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+  border-left: 5px solid #6366f1;
+  transition: transform 0.2s ease;
+}
+
+.worker-card:hover {
+  transform: translateY(-3px);
+}
+
+/* Scrollbar aesthetic */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #a5b4fc;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #818cf8;
+}

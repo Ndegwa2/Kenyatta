@@ -133,7 +133,7 @@ export default function AdminDashboard() {
               backgroundColor: active === 'Dashboard' ? 'rgba(255,255,255,0.1)' : 'transparent',
               borderRadius: '4px'
             }}
-            onClick={() => setActive('Dashboard')}
+            onClick={() => navigate('/admin')}
           >
             🏠 Dashboard
           </div>
@@ -146,7 +146,7 @@ export default function AdminDashboard() {
               backgroundColor: active === 'Tickets' ? 'rgba(255,255,255,0.1)' : 'transparent',
               borderRadius: '4px'
             }}
-            onClick={() => setActive('Tickets')}
+            onClick={() => navigate('/admin/tickets')}
           >
             🎟 Tickets
           </div>
@@ -159,7 +159,7 @@ export default function AdminDashboard() {
               backgroundColor: active === 'Casuals' ? 'rgba(255,255,255,0.1)' : 'transparent',
               borderRadius: '4px'
             }}
-            onClick={() => setActive('Casuals')}
+            onClick={() => navigate('/admin/casuals')}
           >
             👷 Casuals
           </div>
@@ -172,7 +172,7 @@ export default function AdminDashboard() {
               backgroundColor: active === 'Reports' ? 'rgba(255,255,255,0.1)' : 'transparent',
               borderRadius: '4px'
             }}
-            onClick={() => setActive('Reports')}
+            onClick={() => navigate('/admin/reports')}
           >
             📊 Reports
           </div>
@@ -185,7 +185,7 @@ export default function AdminDashboard() {
               backgroundColor: active === 'Settings' ? 'rgba(255,255,255,0.1)' : 'transparent',
               borderRadius: '4px'
             }}
-            onClick={() => setActive('Settings')}
+            onClick={() => navigate('/admin/settings')}
           >
             ⚙ Settings
           </div>
