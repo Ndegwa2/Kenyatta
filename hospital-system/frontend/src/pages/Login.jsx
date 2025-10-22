@@ -36,8 +36,8 @@ const Login = () => {
           navigate('/patient');
         } else if (data.role === 'admin') {
           navigate('/admin');
-        } else if (data.role === 'requester') {
-          navigate('/department'); // requesters go to department dashboard
+        } else if (data.role === 'department') {
+          navigate('/department'); // department users go to department dashboard
         } else if (data.role === 'technician') {
           navigate('/casual'); // technicians go to casual dashboard
         } else {

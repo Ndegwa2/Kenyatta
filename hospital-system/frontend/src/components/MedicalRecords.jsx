@@ -23,7 +23,7 @@ const MedicalRecords = ({ patientId }) => {
       const params = { ...filters };
       if (patientId) params.patient_id = patientId;
 
-      const response = await api.get('/medical_records/patient/' + patientId + '/records', { params });
+      const response = await api.get('/medical-records/patient/' + patientId + '/records', { params });
       setRecords(response);
       setError('');
     } catch (err) {

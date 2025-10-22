@@ -11,7 +11,7 @@ db = SQLAlchemy(app)
 # Configure CORS with credentials support
 CORS(app,
      supports_credentials=True,
-     origins=["http://localhost:3000"],
+     origins=["http://localhost:3000", "http://localhost:3001"],
      allow_headers=["Content-Type", "Authorization"],
      methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"])
 
@@ -50,6 +50,10 @@ register_blueprints(app)
 # Initialize appointment models
 from routes.appointment_routes import init_appointment_models
 init_appointment_models(db)
+
+# Initialize medical records models
+from routes.medical_records_routes import init_medical_records_models
+init_medical_records_models(db)
 
 if __name__ == '__main__':
     app.run(debug=True)

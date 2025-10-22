@@ -292,6 +292,30 @@ def delete_appointment(appointment_id):
         db.session.rollback()
         return jsonify({'error': str(e)}), 500
 
+@appointment_bp.route('/departments', methods=['GET'])
+@login_required
+def get_departments():
+    """Get departments accessible to current user"""
+    try:
+        if current_user.role == 'admin':
+            departments = Department.query.all()
+        elif current_user.role == 'department':
+            # Department users can see their own department
+            department = Department.query.filter_by(user_id=current_user.id).first()
+            departments = [department] if department else []
+        else:
+            # Patients can see all departments for appointment booking
+            departments = Department.query.all()
+
+        return jsonify([{
+            'id': d.id,
+            'name': d.name,
+            'user_id': d.user_id
+        } for d in departments]), 200
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
 @appointment_bp.route('/appointments/availability', methods=['GET'])
 @login_required
 def get_availability():

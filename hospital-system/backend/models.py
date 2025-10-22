@@ -181,10 +181,17 @@ def init_models(db):
         description = db.Column(db.Text, nullable=False)
         status = db.Column(db.String(50), default='open')  # open, in_progress, closed
         priority = db.Column(db.String(20), default='medium')  # low, medium, high, critical
-        category = db.Column(db.String(50), default='general')  # general, medical, administrative, facilities
+        category = db.Column(db.String(50), default='general')  # general, medical, administrative, facilities, medical_equipment, hygiene_facilities, patient_room_facilities, emergency_equipment
         patient_id = db.Column(db.Integer, db.ForeignKey('patient.id'), nullable=False)
         department_id = db.Column(db.Integer, db.ForeignKey('department.id'), nullable=False)
         assigned_to = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
+        # Enhanced location tracking for nursing
+        location_details = db.Column(db.String(200), nullable=True)  # Room 205, ICU Ward A, etc.
+        equipment_id = db.Column(db.String(100), nullable=True)  # Serial number or equipment identifier
+        # Impact assessment for health practice
+        patient_impact = db.Column(db.String(20), nullable=True)  # none, minor, moderate, severe, critical
+        patients_affected = db.Column(db.Integer, default=1)  # Number of patients impacted
+        time_sensitivity = db.Column(db.String(20), nullable=True)  # immediate, within_hour, within_shift, within_day
         created_at = db.Column(db.DateTime, default=db.func.current_timestamp())
         updated_at = db.Column(db.DateTime, default=db.func.current_timestamp(), onupdate=db.func.current_timestamp())
         resolved_at = db.Column(db.DateTime, nullable=True)

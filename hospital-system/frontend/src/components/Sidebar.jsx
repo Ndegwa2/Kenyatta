@@ -23,9 +23,9 @@ const Sidebar = ({ role }) => {
       { icon: '➕', label: 'Create Ticket', id: 'create' }
     ],
     department: [
-      { icon: '🏠', label: 'Dashboard', id: 'dashboard' },
-      { icon: '🎫', label: 'Tickets', id: 'tickets' },
-      { icon: '📝', label: 'Raise Issue', id: 'raise-issue' }
+      { icon: '🏥', label: 'Nursing Dashboard', id: 'dashboard' },
+      { icon: '🎫', label: 'Maintenance Requests', id: 'tickets' },
+      { icon: '📝', label: 'Report Issue', id: 'raise-issue' }
     ],
     admin: [
       { icon: '🏠', label: 'Dashboard', id: 'dashboard' },

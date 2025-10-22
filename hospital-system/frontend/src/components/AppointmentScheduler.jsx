@@ -30,7 +30,8 @@ const AppointmentScheduler = ({ patientId, departmentId, onAppointmentCreated })
 
   const fetchDepartments = async () => {
     try {
-      const response = await api.get('/admin/departments');
+      // For patients, use the appointment departments endpoint directly
+      const response = await api.get('/appointment/departments');
       setDepartments(response);
     } catch (err) {
       console.error('Failed to fetch departments:', err);

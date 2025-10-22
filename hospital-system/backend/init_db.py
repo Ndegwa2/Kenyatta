@@ -538,61 +538,60 @@ def init_database():
             workflow_id=maintenance_workflow.id,
             created_by=admin.id
         )
-        # Create Patient Care Follow-up Workflow
-        followup_workflow = Workflow(
-            name="Patient Care Follow-up Workflow",
-            description="Ensures timely follow-up on patient care issues and medication concerns",
+        # Create Emergency Maintenance Workflow
+        emergency_maint_workflow = Workflow(
+            name="Emergency Maintenance Response Workflow",
+            description="Handles critical maintenance emergencies requiring immediate attention",
             category="ticket",
             created_by=admin.id
         )
-        db.session.add(followup_workflow)
+        db.session.add(emergency_maint_workflow)
         db.session.commit()
 
-        # Patient care workflow steps
-        followup_trigger = WorkflowStep(
-            workflow_id=followup_workflow.id,
+        # Emergency maintenance workflow steps
+        emergency_trigger = WorkflowStep(
+            workflow_id=emergency_maint_workflow.id,
             step_order=1,
-            name="Patient Care Issue Reported",
-            description="Trigger when patient reports care or medication issues",
+            name="Emergency Maintenance Issue",
+            description="Trigger when critical maintenance emergency is reported",
             step_type="trigger",
             config=json.dumps({
                 "trigger_type": "ticket_created",
                 "conditions": [
-                    {"type": "category_match", "value": "medical"}
+                    {"type": "priority_match", "value": "critical"},
+                    {"type": "category_match", "value": "facilities"}
                 ]
             })
         )
-        db.session.add(followup_trigger)
+        db.session.add(emergency_trigger)
 
-        followup_condition = WorkflowStep(
-            workflow_id=followup_workflow.id,
+        emergency_condition = WorkflowStep(
+            workflow_id=emergency_maint_workflow.id,
             step_order=2,
-            name="Check Priority Level",
-            description="Route based on urgency of patient care issue",
+            name="Safety Hazard Check",
+            description="Verify if issue poses immediate safety risk",
             step_type="condition",
             config=json.dumps({
-                "condition_type": "priority_check",
-                "operator": "greater_than",
-                "priority": "medium"
+                "condition_type": "status_check",
+                "status": "open"  # All critical maintenance issues are safety priorities
             })
         )
-        db.session.add(followup_condition)
+        db.session.add(emergency_condition)
 
-        followup_action = WorkflowStep(
-            workflow_id=followup_workflow.id,
+        emergency_action = WorkflowStep(
+            workflow_id=emergency_maint_workflow.id,
             step_order=3,
-            name="Assign to Care Coordinator",
-            description="Assign high-priority care issues to nursing supervisor",
+            name="Emergency Technician Assignment",
+            description="Assign to senior technician with emergency response capability",
             step_type="action",
             config=json.dumps({
                 "action_type": "assign_ticket",
-                "assignment_rule": "specific_user",
-                "user_id": requester1.id  # Nurse supervisor
+                "assignment_rule": "auto"
             })
         )
-        db.session.add(followup_action)
+        db.session.add(emergency_action)
 
-        followup_condition.next_step_id = followup_action.id
+        emergency_condition.next_step_id = emergency_action.id
         db.session.commit()
 
         # Create Equipment Failure Workflow
@@ -706,6 +705,16 @@ def init_database():
         db.session.add(admin_action)
 
         admin_condition.next_step_id = admin_action.id
+        db.session.commit()
+
+        # Create Follow-up Workflow first
+        followup_workflow = Workflow(
+            name="Patient Care Follow-up Workflow",
+            description="Handles patient care follow-up and nursing concerns",
+            category="ticket",
+            created_by=admin.id
+        )
+        db.session.add(followup_workflow)
         db.session.commit()
 
         # Create Patient Care Follow-up Template
