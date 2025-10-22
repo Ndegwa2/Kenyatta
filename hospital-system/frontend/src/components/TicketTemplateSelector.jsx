@@ -27,10 +27,16 @@ const TicketTemplateSelector = ({ onTemplateSelect, onClose }) => {
     // Initialize custom data with template defaults
     const initialData = {};
     if (template.custom_fields) {
-      const fields = JSON.parse(template.custom_fields);
-      Object.keys(fields).forEach(key => {
-        initialData[key] = fields[key].default || '';
-      });
+      try {
+        const fields = typeof template.custom_fields === 'string'
+          ? JSON.parse(template.custom_fields)
+          : template.custom_fields;
+        Object.keys(fields).forEach(key => {
+          initialData[key] = fields[key].default || '';
+        });
+      } catch (error) {
+        console.error('Error parsing custom fields in handleTemplateSelect:', error);
+      }
     }
     setCustomData(initialData);
   };
@@ -52,7 +58,15 @@ const TicketTemplateSelector = ({ onTemplateSelect, onClose }) => {
   const renderCustomFields = () => {
     if (!selectedTemplate || !selectedTemplate.custom_fields) return null;
 
-    const fields = JSON.parse(selectedTemplate.custom_fields);
+    let fields;
+    try {
+      fields = typeof selectedTemplate.custom_fields === 'string'
+        ? JSON.parse(selectedTemplate.custom_fields)
+        : selectedTemplate.custom_fields;
+    } catch (error) {
+      console.error('Error parsing custom fields:', error);
+      return null;
+    }
 
     return Object.entries(fields).map(([key, fieldConfig]) => (
       <div key={key} className="custom-field">
