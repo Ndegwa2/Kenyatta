@@ -116,6 +116,23 @@ export default function DepartmentDashboard() {
         <div className="nursing-top-user">
           <span className="nursing-user-role">HOD Nursing • Wanjiru</span>
           <button className="nursing-notification-btn">🔔</button>
+          <button
+            onClick={handleLogout}
+            className="nursing-logout-btn"
+            style={{
+              marginLeft: '10px',
+              padding: '8px 16px',
+              background: '#ef4444',
+              color: 'white',
+              border: 'none',
+              borderRadius: '6px',
+              cursor: 'pointer',
+              fontSize: '14px',
+              fontWeight: '500'
+            }}
+          >
+            Logout
+          </button>
         </div>
       </header>
 
